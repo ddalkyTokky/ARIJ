@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.team.controller
 
+import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -22,10 +23,10 @@ class TeamController(
 
     @PostMapping
     fun createTeams(
-        @RequestBody name : String
+        @RequestBody teamRequest: TeamRequest
     ): ResponseEntity<TeamResponse> {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(teamService.createTeams(name))
+        return ResponseEntity.status(HttpStatus.CREATED).body(teamService.createTeams(teamRequest))
     }
 
     @GetMapping
@@ -47,10 +48,10 @@ class TeamController(
     @PutMapping("/{teamId}")
     fun updateTeamById(
         @PathVariable teamId: Long,
-        @RequestBody name: String
+        @RequestBody teamRequest: TeamRequest
     ): ResponseEntity<TeamResponse>{
 
-        return ResponseEntity.status(HttpStatus.OK).body(teamService.updateTeamById(teamId, name))
+        return ResponseEntity.status(HttpStatus.OK).body(teamService.updateTeamById(teamId, teamRequest))
     }
 
     @DeleteMapping("/{teamId}")
