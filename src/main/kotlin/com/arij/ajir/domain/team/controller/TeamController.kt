@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.team.controller
 
+import com.arij.ajir.domain.team.dto.TeamResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
