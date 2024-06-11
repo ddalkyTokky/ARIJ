@@ -2,10 +2,13 @@ package com.arij.ajir.domain.team.service
 
 import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
+import com.arij.ajir.domain.team.repository.TeamRepository
 import org.springframework.stereotype.Service
 
 @Service
-class TeamService {
+class TeamService(
+    private val teamRepository: TeamRepository
+) {
 
     fun createTeams(teamRequest: TeamRequest): TeamResponse {
         //TODO("Team Repository 에서 teamRequest.name 과 같은 이름이 있을 경우 throw DuplicationArgumentException")
