@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.member.model
 
+import com.arij.ajir.common.exception.ModelNotFoundException
 import com.arij.ajir.common.exception.ModelNotSavedException
 import com.arij.ajir.domain.member.dto.MemberResponse
 import jakarta.persistence.*
