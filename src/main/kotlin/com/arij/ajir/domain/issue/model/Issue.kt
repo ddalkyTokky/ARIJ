@@ -3,6 +3,8 @@ package com.arij.ajir.domain.issue.model
 import com.arij.ajir.domain.issue.dto.IssueCreateRequest
 import com.arij.ajir.domain.issue.dto.IssueResponse
 import com.arij.ajir.domain.issue.dto.IssueUpdateRequest
+import com.arij.ajir.domain.member.model.Member
+import com.arij.ajir.domain.team.entity.Team
 import jakarta.persistence.*
 import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType
@@ -78,7 +80,7 @@ class Issue(
         return IssueResponse(
             id = this.id!!,
             title = this.title,
-            author = this.member.nickname,
+            author = this.member.nickname!!,
             teamName = this.team.name,
             createdAt = this.createdAt,
             content = this.content,

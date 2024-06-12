@@ -1,6 +1,5 @@
 package com.arij.ajir.domain.member.model
 
-import com.arij.ajir.common.exception.ModelNotFoundException
 import com.arij.ajir.common.exception.ModelNotSavedException
 import com.arij.ajir.domain.member.dto.MemberResponse
 import com.arij.ajir.domain.team.entity.Team
@@ -20,14 +19,14 @@ class Member (
     var team: Team? = null,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "ro", nullable = false)
+    @Column(nullable = false)
     @JdbcType(PostgreSQLEnumJdbcType::class)
     var role: Role = Role.USER,
 
     @Column(nullable = false, unique = true, length = 100)
     var email: String? = null,
 
-    @Column(nullable = false, length = 64)
+    @Column(nullable = false, length = 64, name = "pw")
     var password: String? = null,
 
     @Column(nullable = false, unique = true, length = 20)
@@ -36,7 +35,7 @@ class Member (
     fun toResponse(): MemberResponse {
         return MemberResponse(
             memberId = this.id ?: throw ModelNotSavedException("Member"),
-            teamName = this.team.name,
+            teamName = this.team!!.name,
             email = this.email!!,
             nickname = this.nickname!!
         )

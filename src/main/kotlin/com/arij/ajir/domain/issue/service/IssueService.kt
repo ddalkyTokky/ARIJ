@@ -1,18 +1,25 @@
 package com.arij.ajir.domain.issue.service
 
+import com.arij.ajir.common.exception.ModelNotFoundException
 import com.arij.ajir.domain.issue.dto.IssueCreateRequest
 import com.arij.ajir.domain.issue.dto.IssueResponse
 import com.arij.ajir.domain.issue.dto.IssueUpdateRequest
 import com.arij.ajir.domain.issue.model.Issue
 import com.arij.ajir.domain.issue.model.Priority
 import com.arij.ajir.domain.issue.repository.IssueRepository
+import com.arij.ajir.domain.member.model.Member
+import com.arij.ajir.domain.member.repository.MemberRepository
+import com.arij.ajir.domain.team.repository.TeamRepository
 import org.springframework.data.domain.Sort
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class IssueService(
     private val issueRepository: IssueRepository,
+    private val memberRepository: MemberRepository,
+    private val teamRepository: TeamRepository,
     // todo(private val memberRepository: MemberRepository,
     // todo(private val teamRepository: TeamRepository,
 ) {
@@ -21,8 +28,9 @@ class IssueService(
         keyword: String,
         orderBy: String,
         ascend: Boolean,
-    ): List<IssueResponse> {
+    ): List<IssueResponse>? {
         val pageable = if (ascend) Sort.by(orderBy).ascending() else Sort.by(orderBy).descending()
+        return null
     }
 
     fun getIssueById(id: Long): IssueResponse {
@@ -33,10 +41,10 @@ class IssueService(
     }
 
     @Transactional
-    fun createIssue(request: IssueCreateRequest): IssueResponse {
-        // todo(member = memberRepository)
-        // todo(team = teamRepository)
-        val issue = Issue.createIssue(request, member, team)
+    fun createIssue(request: IssueCreateRequest, email: String): IssueResponse {
+        val member: Member = memberRepository.findByEmail(email) ?: throw ModelNotFoundException("Member", email)
+
+        val issue = Issue.createIssue(request, member, member.team!!)
 
         return issueRepository.save(issue).toResponse()
     }

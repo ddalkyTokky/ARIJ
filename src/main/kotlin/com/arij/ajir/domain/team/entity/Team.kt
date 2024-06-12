@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.team.entity
 
+import com.arij.ajir.domain.issue.model.Issue
 import com.arij.ajir.domain.member.model.Member
 import jakarta.persistence.*
 
@@ -9,10 +10,10 @@ class Team(
     @Column(name = "name", nullable = false, unique = true)
     var name: String = "",
 
-        @OneToMany(mappedBy = "issue", orphanRemoval = true)
-    val issues: MutableList<Issues> = mutableListOf(),
+    @OneToMany(mappedBy = "team", orphanRemoval = true)
+    val issues: MutableList<Issue> = mutableListOf(),
 
-    @OneToMany(mappedBy = "member", orphanRemoval = false)
+    @OneToMany(mappedBy = "team", orphanRemoval = false)
     val members: MutableList<Member> = mutableListOf()
 ){
 

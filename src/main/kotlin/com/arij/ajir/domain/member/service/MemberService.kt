@@ -7,6 +7,8 @@ import com.arij.ajir.domain.member.dto.*
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.model.Role
 import com.arij.ajir.domain.member.repository.MemberRepository
+import com.arij.ajir.domain.team.repository.TeamRepository
+import com.arij.ajir.domain.team.service.TeamService
 import com.arij.ajir.infra.security.jwt.JwtPlugin
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -16,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class MemberService(
     private val memberRepository: MemberRepository,
-    private val teamService: TeamService,
+    private val teamRepository: TeamRepository,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
     private val jwtPlugin: JwtPlugin
 ){
@@ -30,7 +32,7 @@ class MemberService(
         }
 
         val member: Member = Member()
-        val team = teamService.getTeamById(1L)
+        val team = teamRepository.findByIdOrNull(1L)
         member.let {
             it.team = team
             it.role = Role.USER
