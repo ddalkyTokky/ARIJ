@@ -28,7 +28,7 @@ class MemberController (
         //TODO memberEmail 토큰에서 받아오기.
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(memberService.updateNickname(memberNicknameUpdateRequest, "email"))
+            .body(memberService.updateNickname(memberNicknameUpdateRequest, memberNicknameUpdateRequest.email))
     }
 
     @PatchMapping("/password")
@@ -37,7 +37,7 @@ class MemberController (
         //TODO memberEmail 토큰에서 받아오기.
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(memberService.updatePassword(memberPasswordUpdateRequest, "email"))
+            .body(memberService.updatePassword(memberPasswordUpdateRequest, memberPasswordUpdateRequest.email))
     }
 
     @DeleteMapping
