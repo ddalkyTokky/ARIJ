@@ -20,14 +20,6 @@ class MemberService (
     private val teamService: TeamService,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ){
-    fun getMemberById(id: Long): Member {
-        return memberRepository.findByIdOrNull(id) ?: throw ModelNotFoundException("Member", id.toString())
-    }
-
-    fun getMemberByEmail(email: String): Member? {
-        return memberRepository.findByEmail(email) ?: throw ModelNotFoundException("Member", email)
-    }
-
     @Transactional
     fun emailSignup(memberCreateRequest: MemberCreateRequest): MemberResponse {
         if(memberRepository.existsByEmail(memberCreateRequest.email)){
