@@ -1,10 +1,12 @@
 package com.arij.ajir.infra.security.jwt
 
+import com.arij.ajir.infra.security.UserPrincipal
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.security.core.Authentication
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
@@ -23,13 +25,22 @@ class JwtAuthenticationFilter(
     ) {
         val jwt = request.getBearerToken()
 
-        if(jwt != null){
+        if (jwt != null) {
             jwtPlugin.validateToken(jwt)
                 .onSuccess {
                     val userId = it.payload.subject.toLong()
                     val role = it.payload.get("role", String::class.java)
                     val email = it.payload.get("email", String::class.java)
-                    val authentication: Authentication
+
+                    val principal = UserPrincipal(
+                        id = userId,
+                        email = email,
+                        roles = setOf(role)
+                    )
+                    val authentication = JwtAuthenticationToken(
+                        principal = principal,
+                        details = WebAuthenticationDetailsSource().buildDetails(request)
+                    )
                 }
         }
     }
