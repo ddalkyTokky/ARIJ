@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class MemberService(
     private val memberRepository: MemberRepository,
-    private val teamService: error.NonExistentClass,
+    private val teamService: TeamService,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
     private val jwtPlugin: JwtPlugin
 ){
