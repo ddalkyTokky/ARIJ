@@ -5,18 +5,21 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "team")
 class Team(
-    @Column(name = "name", nullable = false, unique = true)
-    var name: String = "",
+
     @OneToMany(mappedBy = "issue", orphanRemoval = true)
     val issues: Issue? = null,
 
     @OneToMany(mappedBy = "member", orphanRemoval = false)
-    val members: Member = Member()
+    val members: MutableList<Member> = mutableListOf()
 ){
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
+
+    @Column(name = "name", nullable = false, unique = true)
+    open var name: String = ""
+    private set
 
     companion object{
         fun createTeam(

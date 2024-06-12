@@ -14,20 +14,19 @@ class TeamService(
 
     fun createTeams(teamRequest: TeamRequest, /*userId : Long*/): TeamResponse {
         //TODO("Team Repository 에서 teamRequest.name 과 같은 이름이 있을 경우 throw DuplicationArgumentException")
-        if(teamRepository.existsName(teamRequest.name)) throw DuplicationArgumentException("중복 되는 팀 이름이 있습니다")
+        if(teamRepository.existsByName(teamRequest.name)) throw DuplicationArgumentException("중복 되는 팀 이름이 있습니다")
         //TODO("Team Repository.save 로 팀 생성")
         val teamResult = teamRepository.save(
             Team.createTeam(teamRequest.name)
         )
         //TODO("Team 생성 사용자 -> 리더로 권한 변경")
         //TODO("이슈와 맴버의 개수를 세는 로직 작성")
-        val members = memberRepository.findAllByTeamId(teamResult.id)
         val leader = memberRepository.findByIdOrNull(userId)
 
         leader.teamId = teamResult.id
 
         //TODO("TeamResponse 에 작성된 팀 정보 반환")
-        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), members)
+        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), teamResult.members)
     }
 
     fun getTeamList(name: String, /*userId : Long*/): List<TeamResponse> {
@@ -44,9 +43,7 @@ class TeamService(
         //TODO("권한이 관리자일 경우 소속팀 여부와 상관 없이 모두 조회 가능")
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("존재 하지 않는 팀 입니다")
 
-        val members = memberRepository.findAllByTeamId(teamResult.id)
-
-        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), members)
+        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), teamResult.members)
     }
 
     fun updateTeamById(teamId: Long, teamRequest: TeamRequest, /*userId : Long*/): TeamResponse {
@@ -55,11 +52,9 @@ class TeamService(
         //TODO("권한이 관리자일 경우 소속팀 여부와 상관 없이 모두 조회 가능")
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("존재 하지 않는 팀 입니다")
 
-        teamResult.name = teamRequest.name
+        Team.createTeam(teamRequest.name)
 
-        val members = memberRepository.findAllByTeamId(teamResult.id)
-
-        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), members)
+        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), teamResult.members)
     }
 
     fun deleteTeamById(teamId: Long, /*userId : Long*/) {
