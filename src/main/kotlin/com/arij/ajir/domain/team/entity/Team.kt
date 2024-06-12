@@ -34,13 +34,13 @@ class Team(
             return team
         }
 
-        fun getIssuesSize():Long{
-            return Team().issues.size.toLong() ?: 0L
-        }
+    }
+    fun getIssuesSize():Long{
+        return this.issues.size.toLong() ?: 0L
+    }
 
-        fun getMembersSize():Long{
-            return Team().members.size.toLong()
-        }
+    fun getMembersSize():Long{
+        return this.members.size.toLong()
     }
 
 }
