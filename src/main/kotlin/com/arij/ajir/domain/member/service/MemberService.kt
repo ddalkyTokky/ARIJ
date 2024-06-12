@@ -8,6 +8,7 @@ import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.model.Role
 import com.arij.ajir.domain.member.repository.MemberRepository
 import com.arij.ajir.infra.security.jwt.JwtPlugin
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -38,25 +39,6 @@ class MemberService(
             it.nickname = memberCreateRequest.nickname
         }
         return memberRepository.save(member).toResponse()
-    }
-
-    fun login(loginRequest: LoginRequest): LoginResponse {
-        val member = memberRepository.findByEmail(loginRequest.email) ?: throw ModelNotFoundException(
-            "Member",
-            loginRequest.email
-        )
-
-        if (!bCryptPasswordEncoder.matches(loginRequest.password, member.password)) {
-            throw InvalidCredentialException()
-        }
-
-        return LoginResponse(
-            accessToken = jwtPlugin.generateAccessToken(
-                subject = member.id.toString(),
-                email = member.email!!,
-                role = member.role
-            )
-        )
     }
 
     @Transactional
@@ -93,4 +75,10 @@ class MemberService(
 
         memberRepository.delete(member)
     }
+
+    fun findById(memberId: Long): Member {
+
+        return memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
+    }
+
 }
