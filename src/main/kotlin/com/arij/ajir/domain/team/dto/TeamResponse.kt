@@ -10,14 +10,15 @@ data class TeamResponse(
     val members : MutableList<Unit>
 ){
     companion object {
-        fun fromList(team: Team, issueCounts: Long, memberCounts: Long):TeamResponse {
+        fun from(team: Team, issueCounts: Long, memberCounts: Long, members: MutableList<Unit>?):TeamResponse {
             return TeamResponse(
                 teamId = team.id!!,
                 teamName = team.name,
                 issueCounts = issueCounts,
                 memberCounts = memberCounts,
-                members = mutableListOf()
+                members = members ?: mutableListOf()
             )
         }
+
     }
 }

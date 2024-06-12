@@ -4,6 +4,7 @@ import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
 import com.arij.ajir.domain.team.entity.Team
 import com.arij.ajir.domain.team.repository.TeamRepository
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -27,19 +28,21 @@ class TeamService(
 
     fun getTeamList(name: String, /*userId : Long*/): List<TeamResponse> {
         //TODO("authentication 에서 접근 사용자가 관리자 인지 확인")
-        //TODO("name 에 아무 값도 들어 오지 않을 경우 전체 쿼리 실행 해서 값 반환")
-        //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
         val teamResult = teamRepository.findAll()
-        //TODO("return 시에 members 에 빈 배열을 넣은 후에 반환")
-        return teamResult.map{ TeamResponse.fromList(it, Team.getIssuesSize(), Team.getMembersSize()) }
+        //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
+
+        return teamResult.map{ TeamResponse.from(it, Team.getIssuesSize(), Team.getMembersSize(), null) }
     }
 
     fun getTeamById(teamId: Long, /*userId : Long*/): TeamResponse {
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         //TODO("권한이 사용자 와 리더 일 경우 teamId 가 authentication 에서 teamName 을 비교 후에 일치 하지 않으면 throw illegalArgumentException")
         //TODO("권한이 관리자일 경우 소속팀 여부와 상관 없이 모두 조회 가능")
-        //TODO("TeamRepository 에서 Team 조회 시 없을 경우 throw ModelNotFoundException")
-        TODO("TeamResponse 를 반환")
+        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("존재 하지 않는 팀 입니다")
+
+        val members = memberRepository.findAllByTeamId(teamResult.id)
+
+        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), members)
     }
 
     fun updateTeamById(teamId: Long, teamRequest: TeamRequest, /*userId : Long*/): TeamResponse {
