@@ -97,14 +97,13 @@ class TeamService(
         val leader = memberService.findById(memberId)
         val member = memberService.findById(memberId)
 
-        when(member.teamId){
-            leader.teamId -> member.teamId = 1
+        when(member.team!!.id){
+            leader.team!!.id -> member.team!!.id = 1
             else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
         }
 
-        val teamResult = teamRepository.findByIdOrNull(leader.teamId) ?: throw ModelNotFoundException("해당 팀은 존재 하지 않습니다", leader.teamId.toString())
-        val memberList = memberService.findAllByTeamId(leader.teamId)
-        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), memberList)
+        val teamResult = teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("해당 팀은 존재 하지 않습니다", leader.team!!.id.toString())
+        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), teamResult.members)
     }
 
 
