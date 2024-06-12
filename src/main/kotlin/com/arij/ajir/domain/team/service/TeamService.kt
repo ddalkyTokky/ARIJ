@@ -21,7 +21,9 @@ class TeamService(
         if(teamRepository.existsByName(teamRequest.name)) throw DuplicateArgumentException("Team", teamRequest.name)
         //TODO("Team Repository.save 로 팀 생성")
         val teamResult = teamRepository.save(
-            Team.createTeam(teamRequest.name)
+            Team(
+                name = teamRequest.name,
+            )
         )
         //TODO("Team 생성 사용자 -> 리더로 권한 변경")
         //TODO("이슈와 맴버의 개수를 세는 로직 작성")
@@ -59,7 +61,7 @@ class TeamService(
         //TODO("권한이 관리자일 경우 소속팀 여부와 상관 없이 모두 조회 가능")
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
 
-        Team.createTeam(teamRequest.name)
+        teamResult.name = teamRequest.name
 
         return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }

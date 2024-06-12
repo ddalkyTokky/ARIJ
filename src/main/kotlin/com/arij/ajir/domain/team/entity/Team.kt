@@ -6,9 +6,11 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "team")
 class Team(
+    @Column(name = "name", nullable = false, unique = true)
+    var name: String = "",
 
-    @OneToMany(mappedBy = "issue", orphanRemoval = true)
-    val issues: Issue? = null,
+        @OneToMany(mappedBy = "issue", orphanRemoval = true)
+    val issues: MutableList<Issues> = mutableListOf(),
 
     @OneToMany(mappedBy = "member", orphanRemoval = false)
     val members: MutableList<Member> = mutableListOf()
@@ -18,25 +20,24 @@ class Team(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
-    @Column(name = "name", nullable = false, unique = true)
-    open var name: String = ""
-    private set
 
-    companion object{
-        fun createTeam(
-            name: String,
-        ):Team{
 
-            val team = Team()
+//    companion object{
+//        fun createTeam(
+//            name: String,
+//        ):Team{
+//
+//            val team = Team()
+//
+//            team.name = name
+//
+//            return team
+//        }
+//
+//    }
 
-            team.name = name
-
-            return team
-        }
-
-    }
     fun getIssuesSize():Long{
-        return this.issues.size.toLong() ?: 0L
+        return this.issues.size.toLong()
     }
 
     fun getMembersSize():Long{
