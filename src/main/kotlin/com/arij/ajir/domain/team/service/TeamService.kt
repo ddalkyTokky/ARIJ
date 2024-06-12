@@ -18,7 +18,7 @@ class TeamService(
 
     fun createTeams(teamRequest: TeamRequest, /*memberId : Long*/): TeamResponse {
         //TODO("Team Repository 에서 teamRequest.name 과 같은 이름이 있을 경우 throw DuplicateArgumentException")
-        if(teamRepository.existsByName(teamRequest.name)) throw DuplicateArgumentException("중복 되는 팀 이름이 있습니다")
+        if(teamRepository.existsByName(teamRequest.name)) throw DuplicateArgumentException("Team", teamRequest.name)
         //TODO("Team Repository.save 로 팀 생성")
         val teamResult = teamRepository.save(
             Team.createTeam(teamRequest.name)
@@ -48,7 +48,7 @@ class TeamService(
         
         //TODO("권한이 관리자일 경우 소속팀 여부와 상관 없이 모두 조회 가능")
 
-        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("존재 하지 않는 팀 입니다", teamId.toString())
+        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
 
         return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), teamResult.members)
     }
@@ -57,7 +57,7 @@ class TeamService(
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         //TODO("권한이 사용자 와 리더 일 경우 teamId 가 authentication 에서 teamName 을 비교 후에 일치 하지 않으면 throw illegalArgumentException")
         //TODO("권한이 관리자일 경우 소속팀 여부와 상관 없이 모두 조회 가능")
-        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("존재 하지 않는 팀 입니다", teamId.toString())
+        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
 
         Team.createTeam(teamRequest.name)
 
@@ -69,7 +69,7 @@ class TeamService(
         //TODO("권한이 리더 일 경우 teamId 가 authentication 에서 teamName 을 비교 후에 일치 하지 않으면 throw illegalArgumentException")
         //TODO("권한이 관리자 일 경우 소속팀 여부와 상관 없이 모두 삭제 가능")
         //TODO("권한이 사용자 일 경우 throw NotAuthenticatedException")
-        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("존재 하지 않는 팀 입니다", teamId.toString())
+        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
 
         return teamRepository.delete(teamResult)
     }
@@ -82,10 +82,10 @@ class TeamService(
 
         when(member.team!!.id){
             1L -> member.team!!.id = leader.team!!.id
-            leader.team!!.id -> throw DuplicateArgumentException("이미 현재 팀에 소속된 맴버 입니다", leader.team!!.id.toString())
+            leader.team!!.id -> throw DuplicateArgumentException("Team", leader.team!!.id.toString())
             else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
         }
-        val teamResult = teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("해당 팀은 존재 하지 않습니다", leader.team!!.id.toString())
+        val teamResult = teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
         return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), teamResult.members)
     }
 
@@ -99,10 +99,10 @@ class TeamService(
 
         when(member.team!!.id){
             leader.team!!.id -> member.team!!.id = 1
-            else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
+            else -> throw IllegalArgumentException("Team")
         }
 
-        val teamResult = teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("해당 팀은 존재 하지 않습니다", leader.team!!.id.toString())
+        val teamResult = teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
         return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), teamResult.members)
     }
 
