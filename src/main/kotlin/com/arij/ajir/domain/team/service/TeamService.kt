@@ -93,8 +93,17 @@ class TeamService(
         //TODO("소속 팀의 리더나 관리자 가 아닐 경우 throw NotAuthenticatedException")
         //TODO("memberId 를 조회 시 없을 경우 throw ModelNotFoundException")
         //TODO("memberId 의 정보를 가져 왔을 때 팀의 id가 authentication 에서 접근 사용자의 TeamId 와 다를 경우 throw illegalArgumentException")
+        val leader = memberRepository.findById(userId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다")
+        val member = memberRepository.findById(memberId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다")
 
-        TODO("member 의 팀 Id를 1로 변경")
+        when(member.teamId){
+            leader.teamId -> member.teamId = 1
+            else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
+        }
+
+        val teamResult = teamRepository.findByIdOrNull(leader.teamId) ?: throw ModelNotFoundException("해당 팀은 존재 하지 않습니다")
+        val memberList = memberRepository.findAllByTeamId(leader.teamId)
+        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), memberList)
     }
 
 
