@@ -1,4 +1,4 @@
-package com.arij.ajir.infra.security
+package com.arij.ajir.infra.security.jwt
 
 import com.arij.ajir.domain.member.model.Role
 import io.jsonwebtoken.Claims
