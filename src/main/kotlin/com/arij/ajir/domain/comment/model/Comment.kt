@@ -6,43 +6,33 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "comment")
-class Comment {
+class Comment(
+    @Column(name = "content", nullable = false)
+    var content: String,
+
+    @Column(name = "created_at", nullable = false)
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+
+    // 나중에 지워질수도? --> issue에서 연관관계를 단방향으로 맺었다면
+    @Column(name = "issue_id", nullable = false)
+    var issueId: Long,
+
+    @Column(name = "member_id", nullable = false)
+    var memberId: Long,
+) {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
-    @Column(name = "content", nullable = false)
-    var content: String? = null
-
-    @Column(name = "created_at", nullable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now()
-
-    @Column(name = "issue_id", nullable = false)
-    var issueId: Long? = null
-
-    @Column(name = "member_id", nullable = false)
-    var memberId: Long? = null
-
-
-    companion object {
-        fun createComment(content: String, issueId: Long, memberId: Long ) : Comment {
-            val comment = Comment()
-            comment.content = content
-            comment.issueId = issueId
-            comment.memberId = memberId
-
-            return comment
-        }
-    }
 
 }
 
-fun Comment.toResponse() : CommentResponse {
+fun Comment.toResponse(): CommentResponse {
     return CommentResponse(
         commentId = id!!,
-        author = "${issueId!!}의 닉네임",
-        content =content!!,
+        author = "${memberId}의 닉네임",
+        content = content,
         createdAt = createdAt
     )
 }
