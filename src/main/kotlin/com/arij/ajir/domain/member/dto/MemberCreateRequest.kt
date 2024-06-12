@@ -2,7 +2,7 @@ package com.arij.ajir.domain.member.dto
 
 import jakarta.validation.constraints.*
 
-data class MemberRequest (
+data class MemberCreateRequest (
     @field:Email(message = "The email is not valid.")
     @field:NotBlank(message = "The email is not valid.")
     val email: String,

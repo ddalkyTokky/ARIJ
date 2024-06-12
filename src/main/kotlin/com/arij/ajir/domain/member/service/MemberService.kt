@@ -1,7 +1,7 @@
 package com.arij.ajir.domain.member.service
 
 import com.arij.ajir.common.exception.ModelNotFoundException
-import com.arij.ajir.domain.member.dto.MemberRequest
+import com.arij.ajir.domain.member.dto.MemberCreateRequest
 import com.arij.ajir.domain.member.dto.MemberResponse
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.model.Role
@@ -26,21 +26,21 @@ class MemberService (
     }
 
     @Transactional
-    fun emailSignup(memberRequest: MemberRequest): MemberResponse {
+    fun emailSignup(memberCreateRequest: MemberCreateRequest): MemberResponse {
         val member: Member = Member()
         val team = teamService.getTeamById(1L)
         member.let {
-            it.team = team,
-            it.role = Role.USER,
-            it.email = memberRequest.email,
-            it.password = bCryptPasswordEncoder.encode(memberRequest.password),
-            it.nickname = memberRequest.nickname
+            it.team = team
+            it.role = Role.USER
+            it.email = memberCreateRequest.email
+            it.password = bCryptPasswordEncoder.encode(memberCreateRequest.password)
+            it.nickname = memberCreateRequest.nickname
         }
         return memberRepository.save(member).toResponse()
     }
 
     @Transactional
-    fun updateMember(memberUpdateRequest: MemberUpdateRequest, memberId: Long, image: String?): MemberResponse {
+    fun updateNickname(memberCreateRequest: MemberUpdateRequest, memberId: Long, image: String?): MemberResponse {
         val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId)
 
         return member.update(
