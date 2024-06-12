@@ -20,11 +20,13 @@ class Comment(
     @Column(name = "member_id", nullable = false)
     var memberId: Long,
 ) {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
+    fun updateContent(content: String) {
+        this.content = content
+    }
 
 }
 
