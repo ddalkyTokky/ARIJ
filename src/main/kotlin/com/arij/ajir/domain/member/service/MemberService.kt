@@ -29,6 +29,8 @@ class MemberService (
 
     @Transactional
     fun emailSignup(memberCreateRequest: MemberCreateRequest): MemberResponse {
+
+
         val member: Member = Member()
         val team = teamService.getTeamById(1L)
         member.let {
