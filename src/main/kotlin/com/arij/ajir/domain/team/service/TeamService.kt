@@ -25,9 +25,9 @@ class TeamService(
         )
         //TODO("Team 생성 사용자 -> 리더로 권한 변경")
         //TODO("이슈와 맴버의 개수를 세는 로직 작성")
-        val leader = memberService.findById(memberId)
-
-        teamResult.id?.let { leader.giveTeamId(it) }
+//        val leader = memberService.findById(memberId)
+//
+//        teamResult.id?.let { leader.giveTeamId(it) }
 
         //TODO("TeamResponse 에 작성된 팀 정보 반환")
         return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
