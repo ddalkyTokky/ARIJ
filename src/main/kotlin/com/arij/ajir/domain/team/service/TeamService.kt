@@ -2,7 +2,6 @@ package com.arij.ajir.domain.team.service
 
 import com.arij.ajir.common.exception.DuplicateArgumentException
 import com.arij.ajir.common.exception.ModelNotFoundException
-import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.service.MemberService
 import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
@@ -78,8 +77,8 @@ class TeamService(
     fun inviteMember(memberId: Long, /*memberId : Long*/): TeamResponse {
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         //TODO("소속 팀의 리더가 아닐 경우 throw NotAuthenticatedException")
-        val leader = memberService.findById(memberId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다", memberId.toString())
-        val member = memberService.findById(memberId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다", memberId.toString())
+        val leader = memberService.findById(memberId)
+        val member = memberService.findById(memberId)
 
         when(member.teamId){
             1 -> member.teamId = leader.teamId
@@ -96,8 +95,8 @@ class TeamService(
         //TODO("소속 팀의 리더나 관리자 가 아닐 경우 throw NotAuthenticatedException")
         //TODO("memberId 를 조회 시 없을 경우 throw ModelNotFoundException")
         //TODO("memberId 의 정보를 가져 왔을 때 팀의 id가 authentication 에서 접근 사용자의 TeamId 와 다를 경우 throw illegalArgumentException")
-        val leader = memberService.findById(memberId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다", memberId.toString())
-        val member = memberService.findById(memberId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다", memberId.toString())
+        val leader = memberService.findById(memberId)
+        val member = memberService.findById(memberId)
 
         when(member.teamId){
             leader.teamId -> member.teamId = 1
