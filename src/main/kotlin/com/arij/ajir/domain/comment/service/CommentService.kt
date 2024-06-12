@@ -6,6 +6,7 @@ import com.arij.ajir.domain.comment.dto.CommentUpdateRequest
 import com.arij.ajir.domain.comment.model.Comment
 import com.arij.ajir.domain.comment.model.toResponse
 import com.arij.ajir.domain.comment.repository.CommentRepository
+import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -36,6 +37,7 @@ class CommentService(
         return comment.toResponse()
     }
 
+    @Transactional
     fun updateComment(commentId: Long, request: CommentUpdateRequest): CommentResponse {
         /* TODO
             1. DB에서 Comment 가져오기 --> 없으면 에러
@@ -55,6 +57,7 @@ class CommentService(
         return comment.toResponse()
     }
 
+    @Transactional
     fun deleteComment(commentId: Long): Unit {
         /* TODO
             1. DB에서 Comment 가져오기 --> 없으면 에러
