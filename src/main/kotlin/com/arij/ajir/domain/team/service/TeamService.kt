@@ -20,11 +20,9 @@ class TeamService(
         )
         //TODO("Team 생성 사용자 -> 리더로 권한 변경")
         //TODO("이슈와 맴버의 개수를 세는 로직 작성")
-        val issueCount = issueRepository.findAllByTeamId(teamResult.id).size.toLong()
         val members = memberRepository.findAllByTeamId(teamResult.id)
-        val memberCount = members.size.toLong()
         //TODO("TeamResponse 에 작성된 팀 정보 반환")
-        return TeamResponse.from(teamResult, issueCount, memberCount, members)
+        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), members)
     }
 
     fun getTeamList(name: String, /*userId : Long*/): List<TeamResponse> {

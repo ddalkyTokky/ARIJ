@@ -14,10 +14,10 @@ class Team{
     var name: String = ""
 
     @OneToMany(mappedBy = "issue", orphanRemoval = true)
-    val issue: Issue = Issue()
+    val issues: Issue? = null
 
     @OneToMany(mappedBy = "member", orphanRemoval = false)
-    val member: Member = Member()
+    val members: Member = Member()
 
     companion object{
         fun createTeam(
@@ -29,6 +29,14 @@ class Team{
             team.name = name
 
             return team
+        }
+
+        fun getIssuesSize():Long{
+           return Team().issues.size.toLong() ?: 0L
+        }
+
+        fun getMembersSize():Long{
+            return Team().members.size.toLong()
         }
     }
 
