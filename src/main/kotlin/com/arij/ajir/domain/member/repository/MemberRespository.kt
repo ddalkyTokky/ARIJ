@@ -7,4 +7,5 @@ interface MemberRepository : JpaRepository<Member, Long> {
     fun findByEmail(email: String): Member?
     fun existsByEmail(email: String): Boolean
     fun existsByNickname(nickName: String): Boolean
+    fun findAllByTeamId(teamId: Long): MutableList<Member>
 }

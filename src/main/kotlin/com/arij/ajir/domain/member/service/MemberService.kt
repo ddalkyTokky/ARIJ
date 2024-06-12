@@ -9,6 +9,7 @@ import com.arij.ajir.domain.member.dto.MemberResponse
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.model.Role
 import com.arij.ajir.domain.member.repository.MemberRepository
+import com.arij.ajir.domain.team.service.TeamService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
@@ -77,5 +78,14 @@ class MemberService (
         val member = memberRepository.findByEmail(memberEmail) ?: throw ModelNotFoundException("Member", memberEmail)
 
         memberRepository.delete(member)
+    }
+
+    fun findById(memberId: Long): Member {
+
+        return memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
+    }
+
+    fun findAllByTeamId(teamId: Long): MutableList<Member> {
+        return memberRepository.findAllByTeamId(teamId)
     }
 }

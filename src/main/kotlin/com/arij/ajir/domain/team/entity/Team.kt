@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.team.entity
 
+import com.arij.ajir.domain.member.model.Member
 import jakarta.persistence.*
 
 @Entity
@@ -15,7 +16,7 @@ class Team(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null
+    var id: Long? = null
 
     @Column(name = "name", nullable = false, unique = true)
     open var name: String = ""

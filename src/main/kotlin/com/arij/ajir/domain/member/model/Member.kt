@@ -3,6 +3,7 @@ package com.arij.ajir.domain.member.model
 import com.arij.ajir.common.exception.ModelNotFoundException
 import com.arij.ajir.common.exception.ModelNotSavedException
 import com.arij.ajir.domain.member.dto.MemberResponse
+import com.arij.ajir.domain.team.entity.Team
 import jakarta.persistence.*
 import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType
@@ -39,5 +40,9 @@ class Member (
             email = this.email!!,
             nickname = this.nickname!!
         )
+    }
+
+    fun giveTeamId(teamId: Long){
+        this.team?.id = teamId
     }
 }
