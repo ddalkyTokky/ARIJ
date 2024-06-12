@@ -73,8 +73,8 @@ class MemberService (
     }
 
     @Transactional
-    fun deleteMember(memberId: Long) {
-        val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId)
+    fun deleteMember(memberEmail: String) {
+        val member = memberRepository.findByEmail(memberEmail) ?: throw ModelNotFoundException("Member", memberEmail)
 
         memberRepository.delete(member)
     }
