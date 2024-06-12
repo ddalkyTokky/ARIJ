@@ -29,7 +29,9 @@ class MemberService (
 
     @Transactional
     fun emailSignup(memberCreateRequest: MemberCreateRequest): MemberResponse {
-
+        if(memberRepository.existsByEmail(memberCreateRequest.email)){
+            throw
+        }
 
         val member: Member = Member()
         val team = teamService.getTeamById(1L)
