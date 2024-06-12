@@ -80,14 +80,13 @@ class TeamService(
         val leader = memberService.findById(memberId)
         val member = memberService.findById(memberId)
 
-        when(member.teamId){
-            1 -> member.teamId = leader.teamId
-            leader.teamId -> throw DuplicateArgumentException("이미 현재 팀에 소속된 맴버 입니다", leader.teamId.toString())
+        when(member.team!!.id){
+            1L -> member.team!!.id = leader.team!!.id
+            leader.team!!.id -> throw DuplicateArgumentException("이미 현재 팀에 소속된 맴버 입니다", leader.team!!.id.toString())
             else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
         }
-        val teamResult = teamRepository.findByIdOrNull(leader.teamId) ?: throw ModelNotFoundException("해당 팀은 존재 하지 않습니다", leader.teamId.toString())
-        val memberList = memberService.findAllByTeamId(leader.teamId)
-        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), memberList)
+        val teamResult = teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("해당 팀은 존재 하지 않습니다", leader.team!!.id.toString())
+        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), teamResult.members)
     }
 
     fun firedMember(memberId: Long, /*memberId : Long*/):TeamResponse{
