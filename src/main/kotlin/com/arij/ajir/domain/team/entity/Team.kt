@@ -4,20 +4,19 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "team")
-class Team{
+class Team(
+    @Column(name = "name", nullable = false, unique = true)
+    var name: String = "",
+    @OneToMany(mappedBy = "issue", orphanRemoval = true)
+    val issues: Issue? = null,
+
+    @OneToMany(mappedBy = "member", orphanRemoval = false)
+    val members: Member = Member()
+){
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
-
-    @Column(name = "name", nullable = false, unique = true)
-    var name: String = ""
-
-    @OneToMany(mappedBy = "issue", orphanRemoval = true)
-    val issues: Issue? = null
-
-    @OneToMany(mappedBy = "member", orphanRemoval = false)
-    val members: Member = Member()
 
     companion object{
         fun createTeam(
@@ -32,7 +31,7 @@ class Team{
         }
 
         fun getIssuesSize():Long{
-           return Team().issues.size.toLong() ?: 0L
+            return Team().issues.size.toLong() ?: 0L
         }
 
         fun getMembersSize():Long{
