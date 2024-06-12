@@ -32,8 +32,11 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("io.jsonwebtoken:jjwt:0.12.3")
 
 	runtimeOnly("org.postgresql:postgresql")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.3")
 
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
