@@ -4,14 +4,18 @@ import com.arij.ajir.common.exception.ModelNotFoundException
 import com.arij.ajir.domain.member.dto.MemberRequest
 import com.arij.ajir.domain.member.dto.MemberResponse
 import com.arij.ajir.domain.member.model.Member
+import com.arij.ajir.domain.member.model.Role
 import com.arij.ajir.domain.member.repository.MemberRepository
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class MemberService (
-    private val memberRepository: MemberRepository
+    private val memberRepository: MemberRepository,
+    private val teamService: TeamService,
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ){
     fun getMemberById(id: Long): Member {
         return memberRepository.findByIdOrNull(id) ?: throw ModelNotFoundException("Member", id.toString())
@@ -22,15 +26,17 @@ class MemberService (
     }
 
     @Transactional
-    fun emailSignup(memberRequest: MemberRequest, image: String?): MemberResponse {
-        return memberRepository.save(
-            Member.createMember(
-                memberCreateRequest,
-                bCryptPasswordEncoder.encode(memberCreateRequest.password),
-                image,
-                SignUpType.EMAIL
-            )
-        ).toResponse()
+    fun emailSignup(memberRequest: MemberRequest): MemberResponse {
+        val member: Member = Member()
+        val team = teamService.getTeamById(1L)
+        member.let {
+            it.team = team,
+            it.role = Role.USER,
+            it.email = memberRequest.email,
+            it.password = bCryptPasswordEncoder.encode(memberRequest.password),
+            it.nickname = memberRequest.nickname
+        }
+        return memberRepository.save(member).toResponse()
     }
 
     @Transactional
