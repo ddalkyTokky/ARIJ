@@ -1,25 +1,24 @@
 package com.arij.ajir.domain.member.service
 
 import com.arij.ajir.common.exception.DuplicateArgumentException
+import com.arij.ajir.common.exception.InvalidCredentialException
 import com.arij.ajir.common.exception.ModelNotFoundException
-import com.arij.ajir.domain.member.dto.MemberCreateRequest
-import com.arij.ajir.domain.member.dto.MemberNicknameUpdateRequest
-import com.arij.ajir.domain.member.dto.MemberPasswordUpdateRequest
-import com.arij.ajir.domain.member.dto.MemberResponse
+import com.arij.ajir.domain.member.dto.*
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.model.Role
 import com.arij.ajir.domain.member.repository.MemberRepository
-import com.arij.ajir.domain.team.service.TeamService
+import com.arij.ajir.infra.security.jwt.JwtPlugin
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class MemberService (
+class MemberService(
     private val memberRepository: MemberRepository,
     private val teamService: TeamService,
-    private val bCryptPasswordEncoder: BCryptPasswordEncoder
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
+    private val jwtPlugin: JwtPlugin
 ){
     @Transactional
     fun emailSignup(memberCreateRequest: MemberCreateRequest): MemberResponse {
@@ -60,10 +59,7 @@ class MemberService (
     ): MemberResponse {
         val member = memberRepository.findByEmail(memberEmail) ?: throw ModelNotFoundException("Member", memberEmail)
 
-        if (bCryptPasswordEncoder.matches(
-                memberPasswordUpdateRequest.oldPw,
-                member.password
-            )
+        if (bCryptPasswordEncoder.matches(memberPasswordUpdateRequest.oldPw, member.password)
         ) {
             member.password =
                 bCryptPasswordEncoder.encode(
@@ -85,7 +81,4 @@ class MemberService (
         return memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
     }
 
-    fun findAllByTeamId(teamId: Long): MutableList<Member> {
-        return memberRepository.findAllByTeamId(teamId)
-    }
 }
