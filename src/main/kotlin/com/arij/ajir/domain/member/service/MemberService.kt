@@ -1,24 +1,23 @@
 package com.arij.ajir.domain.member.service
 
 import com.arij.ajir.common.exception.DuplicateArgumentException
+import com.arij.ajir.common.exception.InvalidCredentialException
 import com.arij.ajir.common.exception.ModelNotFoundException
-import com.arij.ajir.domain.member.dto.MemberCreateRequest
-import com.arij.ajir.domain.member.dto.MemberNicknameUpdateRequest
-import com.arij.ajir.domain.member.dto.MemberPasswordUpdateRequest
-import com.arij.ajir.domain.member.dto.MemberResponse
+import com.arij.ajir.domain.member.dto.*
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.model.Role
 import com.arij.ajir.domain.member.repository.MemberRepository
-import org.springframework.data.repository.findByIdOrNull
+import com.arij.ajir.infra.security.jwt.JwtPlugin
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class MemberService (
+class MemberService(
     private val memberRepository: MemberRepository,
-    private val teamService: TeamService,
-    private val bCryptPasswordEncoder: BCryptPasswordEncoder
+    private val teamService: error.NonExistentClass,
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
+    private val jwtPlugin: JwtPlugin
 ){
     @Transactional
     fun emailSignup(memberCreateRequest: MemberCreateRequest): MemberResponse {
@@ -41,6 +40,25 @@ class MemberService (
         return memberRepository.save(member).toResponse()
     }
 
+    fun login(loginRequest: LoginRequest): LoginResponse {
+        val member = memberRepository.findByEmail(loginRequest.email) ?: throw ModelNotFoundException(
+            "Member",
+            loginRequest.email
+        )
+
+        if (!bCryptPasswordEncoder.matches(loginRequest.password, member.password)) {
+            throw InvalidCredentialException()
+        }
+
+        return LoginResponse(
+            accessToken = jwtPlugin.generateAccessToken(
+                subject = member.id.toString(),
+                email = member.email!!,
+                role = member.role
+            )
+        )
+    }
+
     @Transactional
     fun updateNickname(
         memberNicknameUpdateRequest: MemberNicknameUpdateRequest,
@@ -59,10 +77,7 @@ class MemberService (
     ): MemberResponse {
         val member = memberRepository.findByEmail(memberEmail) ?: throw ModelNotFoundException("Member", memberEmail)
 
-        if (bCryptPasswordEncoder.matches(
-                memberPasswordUpdateRequest.oldPw,
-                member.password
-            )
+        if (bCryptPasswordEncoder.matches(memberPasswordUpdateRequest.oldPw, member.password)
         ) {
             member.password =
                 bCryptPasswordEncoder.encode(
