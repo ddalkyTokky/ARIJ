@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.member.service
 
+import com.arij.ajir.common.exception.DuplicateArgumentException
 import com.arij.ajir.common.exception.ModelNotFoundException
 import com.arij.ajir.domain.member.dto.MemberCreateRequest
 import com.arij.ajir.domain.member.dto.MemberNicknameUpdateRequest
@@ -30,7 +31,10 @@ class MemberService (
     @Transactional
     fun emailSignup(memberCreateRequest: MemberCreateRequest): MemberResponse {
         if(memberRepository.existsByEmail(memberCreateRequest.email)){
-            throw
+            throw DuplicateArgumentException("Member", memberCreateRequest.email)
+        }
+        if(memberRepository.existsByNickname(memberCreateRequest.nickname)){
+            throw DuplicateArgumentException("Member", memberCreateRequest.nickname)
         }
 
         val member: Member = Member()
