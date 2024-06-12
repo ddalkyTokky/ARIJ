@@ -27,6 +27,7 @@ repositories {
 }
 
 dependencies {
+<<<<<<< feature/comment
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 //	implementation("org.springframework.boot:spring-boot-starter-security") // 나중에 살림
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -52,6 +53,23 @@ allOpen {
     annotation("jakarta.persistence.Entity")
     annotation("jakarta.persistence.MappedSuperclass")
     annotation("jakarta.persistence.Embeddable")
+=======
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+
+	runtimeOnly("org.postgresql:postgresql")
+
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	testImplementation("org.springframework.security:spring-security-test")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+>>>>>>> dev0.0.0
 }
 
 kotlin {
