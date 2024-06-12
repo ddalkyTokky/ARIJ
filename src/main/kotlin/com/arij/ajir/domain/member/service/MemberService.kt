@@ -1,6 +1,8 @@
 package com.arij.ajir.domain.member.service
 
 import com.arij.ajir.common.exception.ModelNotFoundException
+import com.arij.ajir.domain.member.dto.MemberRequest
+import com.arij.ajir.domain.member.dto.MemberResponse
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.repository.MemberRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -20,14 +22,7 @@ class MemberService (
     }
 
     @Transactional
-    fun emailSignupMember(memberCreateRequest: MemberCreateRequest, image: String?): MemberResponse {
-        val authNumber = redisService.getAuthNumber(memberCreateRequest.email)
-            ?: throw IllegalArgumentException("Authentication timeout or no authentication request") // 인증 DB에 메일(key)이 없는 경우(인증 시간 초과 또는 인증 요청을 하지 않음 등)
-
-        if (authNumber != memberCreateRequest.authNumber) { // 인증 번호가 일치하지 않는 경우
-            throw IllegalArgumentException("The authentication number does not match.")
-        }
-
+    fun emailSignup(memberRequest: MemberRequest, image: String?): MemberResponse {
         return memberRepository.save(
             Member.createMember(
                 memberCreateRequest,
