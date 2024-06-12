@@ -56,7 +56,15 @@ class CommentService(
     }
 
     fun deleteComment(commentId: Long): Unit {
-        TODO("Not yet implemented")
+        /* TODO
+            1. DB에서 Comment 가져오기 --> 없으면 에러
+            2. comment 삭제
+         */
+
+        val comment: Comment =
+            commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("Comment not found")
+
+        commentRepository.delete(comment)
     }
 
 
