@@ -49,9 +49,13 @@ class TeamService(
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         //TODO("권한이 사용자 와 리더 일 경우 teamId 가 authentication 에서 teamName 을 비교 후에 일치 하지 않으면 throw illegalArgumentException")
         //TODO("권한이 관리자일 경우 소속팀 여부와 상관 없이 모두 조회 가능")
-        //TODO("TeamRepository 에서 Team 조회 시 없을 경우 throw ModelNotFoundException")
-        //TODO("조회된 팀의 name 을 update")
-        TODO("update 된 TeamResponse 를 반환")
+        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("존재 하지 않는 팀 입니다")
+
+        teamResult.name = teamRequest.name
+
+        val members = memberRepository.findAllByTeamId(teamResult.id)
+
+        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), members)
     }
 
     fun deleteTeamById(teamId: Long, /*userId : Long*/) {
@@ -59,7 +63,6 @@ class TeamService(
         //TODO("권한이 리더 일 경우 teamId 가 authentication 에서 teamName 을 비교 후에 일치 하지 않으면 throw illegalArgumentException")
         //TODO("권한이 관리자 일 경우 소속팀 여부와 상관 없이 모두 삭제 가능")
         //TODO("권한이 사용자 일 경우 throw NotAuthenticatedException")
-        //TODO("TeamRepository 에서 Team 조회 시 없을 경우 throw ModelNotFoundException")
         TODO("받은 팀을 delete 로 삭제")
     }
 
