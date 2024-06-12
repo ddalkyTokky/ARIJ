@@ -6,6 +6,7 @@ import com.arij.ajir.domain.comment.dto.CommentUpdateRequest
 import com.arij.ajir.domain.comment.model.Comment
 import com.arij.ajir.domain.comment.model.toResponse
 import com.arij.ajir.domain.comment.repository.CommentRepository
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -36,7 +37,22 @@ class CommentService(
     }
 
     fun updateComment(commentId: Long, request: CommentUpdateRequest): CommentResponse {
-        TODO("Not yet implemented")
+        /* TODO
+            1. DB에서 Comment 가져오기 --> 없으면 에러
+            2-1. comment의 내용 수정
+            2-2. 댓글 내용 수정시 유효성 검사 --> 제약이 생길 시
+            3. DB에 변경된 Comment 저장
+            4. response dto로 반환
+         */
+
+        val comment: Comment =
+            commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("Comment not found")
+
+        comment.updateContent(request.content)
+
+        commentRepository.save(comment)
+
+        return comment.toResponse()
     }
 
     fun deleteComment(commentId: Long): Unit {
