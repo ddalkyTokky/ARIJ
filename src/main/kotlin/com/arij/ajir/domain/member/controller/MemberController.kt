@@ -22,6 +22,9 @@ class MemberController (
             .body(memberService.emailSignup(memberCreateRequest))
     }
 
+    @PostMapping("login")
+    fun login(@RequestBody )
+
     @PatchMapping("/nickname")
     fun updateMemberNickname(@RequestBody @Valid memberNicknameUpdateRequest: MemberNicknameUpdateRequest): ResponseEntity<MemberResponse> {
         //TODO memberEmail 토큰에서 받아오기.
