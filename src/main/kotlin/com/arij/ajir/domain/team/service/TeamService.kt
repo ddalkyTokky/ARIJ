@@ -13,8 +13,8 @@ class TeamService(
 ) {
 
     fun createTeams(teamRequest: TeamRequest, /*userId : Long*/): TeamResponse {
-        //TODO("Team Repository 에서 teamRequest.name 과 같은 이름이 있을 경우 throw DuplicationArgumentException")
-        if(teamRepository.existsByName(teamRequest.name)) throw DuplicationArgumentException("중복 되는 팀 이름이 있습니다")
+        //TODO("Team Repository 에서 teamRequest.name 과 같은 이름이 있을 경우 throw DuplicateArgumentException")
+        if(teamRepository.existsByName(teamRequest.name)) throw DuplicateArgumentException("중복 되는 팀 이름이 있습니다")
         //TODO("Team Repository.save 로 팀 생성")
         val teamResult = teamRepository.save(
             Team.createTeam(teamRequest.name)
@@ -75,7 +75,7 @@ class TeamService(
 
         when(member.teamId){
             1 -> member.teamId = leader.teamId
-            leader.teamId -> throw DuplicationArgumentException("이미 현재 팀에 소속된 맴버 입니다")
+            leader.teamId -> throw DuplicateArgumentException("이미 현재 팀에 소속된 맴버 입니다")
             else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
         }
         val teamResult = teamRepository.findByIdOrNull(leader.teamId) ?: throw ModelNotFoundException("해당 팀은 존재 하지 않습니다")
