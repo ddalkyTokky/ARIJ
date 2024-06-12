@@ -80,13 +80,15 @@ class MemberService(
     ): MemberResponse {
         val member = memberRepository.findByEmail(memberEmail) ?: throw ModelNotFoundException("Member", memberEmail)
 
-        if (bCryptPasswordEncoder.matches(memberPasswordUpdateRequest.oldPw, member.password)
+        if (!bCryptPasswordEncoder.matches(memberPasswordUpdateRequest.oldPw, member.password)
         ) {
-            member.password =
-                bCryptPasswordEncoder.encode(
-                    memberPasswordUpdateRequest.newPw
-                )
+            throw InvalidCredentialException()
         }
+
+        member.password =
+            bCryptPasswordEncoder.encode(
+                memberPasswordUpdateRequest.newPw
+            )
         return member.toResponse()
     }
 
