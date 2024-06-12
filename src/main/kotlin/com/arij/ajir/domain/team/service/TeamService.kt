@@ -22,6 +22,10 @@ class TeamService(
         //TODO("Team 생성 사용자 -> 리더로 권한 변경")
         //TODO("이슈와 맴버의 개수를 세는 로직 작성")
         val members = memberRepository.findAllByTeamId(teamResult.id)
+        val leader = memberRepository.findByIdOrNull(userId)
+
+        leader.teamId = teamResult.id
+
         //TODO("TeamResponse 에 작성된 팀 정보 반환")
         return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), members)
     }
@@ -71,13 +75,20 @@ class TeamService(
     fun inviteMember(memberId: Long, /*userId : Long*/): TeamResponse {
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         //TODO("소속 팀의 리더가 아닐 경우 throw NotAuthenticatedException")
-        //TODO("memberId 의 정보를 가져 왔을 때 팀의 id가 1이 아닌 다른 값을 가질 때 throw illegalArgumentException")
-        //TODO("memberId 의 정보를 가져 왔을 때 팀의 id가 authentication 에서 접근 사용자의 teamId 와 같을 경우 throw DuplicationArgumentException")
-        //TODO("memberId 를 조회 시 없을 경우 throw ModelNotFoundException")
-        TODO("member 의 팀 Id 를 authentication 에서 접근 사용자의 Id와 매칭")
+        val leader = memberRepository.findById(userId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다")
+        val member = memberRepository.findById(memberId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다")
+
+        when(member.teamId){
+            1 -> member.teamId = leader.teamId
+            leader.teamId -> throw DuplicationArgumentException("이미 현재 팀에 소속된 맴버 입니다")
+            else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
+        }
+        val teamResult = teamRepository.findByIdOrNull(leader.teamId) ?: throw ModelNotFoundException("해당 팀은 존재 하지 않습니다")
+        val memberList = memberRepository.findAllByTeamId(leader.teamId)
+        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), memberList)
     }
 
-    fun firedMember(memberId: Long, /*userId : Long*/) {
+    fun firedMember(memberId: Long, /*userId : Long*/):TeamResponse{
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         //TODO("소속 팀의 리더나 관리자 가 아닐 경우 throw NotAuthenticatedException")
         //TODO("memberId 를 조회 시 없을 경우 throw ModelNotFoundException")
