@@ -2,6 +2,7 @@ package com.arij.ajir.domain.team.service
 
 import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
+import com.arij.ajir.domain.team.entity.Team
 import com.arij.ajir.domain.team.repository.TeamRepository
 import org.springframework.stereotype.Service
 
@@ -10,11 +11,20 @@ class TeamService(
     private val teamRepository: TeamRepository
 ) {
 
-    fun createTeams(teamRequest: TeamRequest): TeamResponse {
+    fun createTeams(teamRequest: TeamRequest, /*userId : Long*/): TeamResponse {
         //TODO("Team Repository 에서 teamRequest.name 과 같은 이름이 있을 경우 throw DuplicationArgumentException")
+        if(teamRepository.existsName(teamRequest.name)) throw DuplicationArgumentException("중복 되는 팀 이름이 있습니다")
         //TODO("Team Repository.save 로 팀 생성")
+        val teamResult = teamRepository.save(
+            Team.createTeam(teamRequest.name)
+        )
         //TODO("Team 생성 사용자 -> 리더로 권한 변경")
-        TODO("TeamResponse 에 작성된 팀 정보 반환")
+        //TODO("이슈와 맴버의 개수를 세는 로직 작성")
+        val issueCount = issueRepository.findAllByTeamId(teamResult.id).size.toLong()
+        val members = memberRepository.findAllByTeamId(teamResult.id)
+        val memberCount = members.size.toLong()
+        //TODO("TeamResponse 에 작성된 팀 정보 반환")
+        return TeamResponse.from(teamResult, issueCount, memberCount, members)
     }
 
     fun getTeamList(name: String, /*userId : Long*/): List<TeamResponse> {
