@@ -41,6 +41,25 @@ class MemberService(
         return memberRepository.save(member).toResponse()
     }
 
+    fun login(loginRequest: LoginRequest): LoginResponse {
+        val member = memberRepository.findByEmail(loginRequest.email) ?: throw ModelNotFoundException(
+            "Member",
+            loginRequest.email
+        )
+
+        if (!bCryptPasswordEncoder.matches(loginRequest.password, member.password)) {
+            throw InvalidCredentialException()
+        }
+
+        return LoginResponse(
+            accessToken = jwtPlugin.generateAccessToken(
+                subject = member.id.toString(),
+                email = member.email!!,
+                role = member.role
+            )
+        )
+    }
+
     @Transactional
     fun updateNickname(
         memberNicknameUpdateRequest: MemberNicknameUpdateRequest,
