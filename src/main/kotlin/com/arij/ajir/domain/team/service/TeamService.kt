@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class TeamService(
-    private val teamRepository: TeamRepository
+    private val teamRepository: TeamRepository,
+    private val memberService : MemberService
 ) {
 
     fun createTeams(teamRequest: TeamRequest, /*userId : Long*/): TeamResponse {
@@ -21,7 +22,7 @@ class TeamService(
         )
         //TODO("Team 생성 사용자 -> 리더로 권한 변경")
         //TODO("이슈와 맴버의 개수를 세는 로직 작성")
-        val leader = memberRepository.findByIdOrNull(userId)
+        val leader = memberService.findByIdOrNull(userId)
 
         leader.teamId = teamResult.id
 
@@ -70,8 +71,8 @@ class TeamService(
     fun inviteMember(memberId: Long, /*userId : Long*/): TeamResponse {
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         //TODO("소속 팀의 리더가 아닐 경우 throw NotAuthenticatedException")
-        val leader = memberRepository.findById(userId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다")
-        val member = memberRepository.findById(memberId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다")
+        val leader = memberService.findById(userId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다")
+        val member = memberService.findById(memberId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다")
 
         when(member.teamId){
             1 -> member.teamId = leader.teamId
@@ -79,7 +80,7 @@ class TeamService(
             else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
         }
         val teamResult = teamRepository.findByIdOrNull(leader.teamId) ?: throw ModelNotFoundException("해당 팀은 존재 하지 않습니다")
-        val memberList = memberRepository.findAllByTeamId(leader.teamId)
+        val memberList = memberService.findAllByTeamId(leader.teamId)
         return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), memberList)
     }
 
@@ -88,8 +89,8 @@ class TeamService(
         //TODO("소속 팀의 리더나 관리자 가 아닐 경우 throw NotAuthenticatedException")
         //TODO("memberId 를 조회 시 없을 경우 throw ModelNotFoundException")
         //TODO("memberId 의 정보를 가져 왔을 때 팀의 id가 authentication 에서 접근 사용자의 TeamId 와 다를 경우 throw illegalArgumentException")
-        val leader = memberRepository.findById(userId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다")
-        val member = memberRepository.findById(memberId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다")
+        val leader = memberService.findById(userId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다")
+        val member = memberService.findById(memberId) ?: throw ModelNotFoundException("해당 맴버는 존재 하지 않습니다")
 
         when(member.teamId){
             leader.teamId -> member.teamId = 1
@@ -97,7 +98,7 @@ class TeamService(
         }
 
         val teamResult = teamRepository.findByIdOrNull(leader.teamId) ?: throw ModelNotFoundException("해당 팀은 존재 하지 않습니다")
-        val memberList = memberRepository.findAllByTeamId(leader.teamId)
+        val memberList = memberService.findAllByTeamId(leader.teamId)
         return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), memberList)
     }
 
