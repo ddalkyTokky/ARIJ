@@ -23,7 +23,7 @@ class MemberController(
             .body(memberService.emailSignup(memberCreateRequest))
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     fun login(@RequestBody @Valid loginRequest: LoginRequest): ResponseEntity<LoginResponse> {
         return ResponseEntity
             .status(HttpStatus.OK)
