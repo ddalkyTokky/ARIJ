@@ -29,7 +29,9 @@ class TeamService(
         //TODO("authentication 에서 접근 사용자가 관리자 인지 확인")
         //TODO("name 에 아무 값도 들어 오지 않을 경우 전체 쿼리 실행 해서 값 반환")
         //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
-        TODO("return 시에 members 에 빈 배열을 넣은 후에 반환")
+        val teamResult = teamRepository.findAll()
+        //TODO("return 시에 members 에 빈 배열을 넣은 후에 반환")
+        return teamResult.map{ TeamResponse.fromList(it, Team.getIssuesSize(), Team.getMembersSize()) }
     }
 
     fun getTeamById(teamId: Long, /*userId : Long*/): TeamResponse {
