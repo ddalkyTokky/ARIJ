@@ -30,7 +30,7 @@ class TeamService(
         teamResult.id?.let { leader.giveTeamId(it) }
 
         //TODO("TeamResponse 에 작성된 팀 정보 반환")
-        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), teamResult.members)
+        return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }
 
     fun getTeamList(name: String, /*memberId : Long*/): List<TeamResponse> {
@@ -38,7 +38,7 @@ class TeamService(
         val teamResult = teamRepository.findAll()
         //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
 
-        return teamResult.map{ TeamResponse.from(it, Team.getIssuesSize(), Team.getMembersSize(), null) }
+        return teamResult.map{ TeamResponse.from(it, it.getIssuesSize(), it.getMembersSize(), null) }
     }
 
     fun getTeamById(teamId: Long, /*memberId : Long*/): TeamResponse {
@@ -50,7 +50,7 @@ class TeamService(
 
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
 
-        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), teamResult.members)
+        return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }
 
     fun updateTeamById(teamId: Long, teamRequest: TeamRequest, /*memberId : Long*/): TeamResponse {
@@ -61,7 +61,7 @@ class TeamService(
 
         Team.createTeam(teamRequest.name)
 
-        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), teamResult.members)
+        return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }
 
     fun deleteTeamById(teamId: Long, /*memberId : Long*/) {
@@ -86,7 +86,7 @@ class TeamService(
             else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
         }
         val teamResult = teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
-        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), teamResult.members)
+        return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }
 
     fun firedMember(memberId: Long, /*memberId : Long*/):TeamResponse{
@@ -103,7 +103,7 @@ class TeamService(
         }
 
         val teamResult = teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
-        return TeamResponse.from(teamResult, Team.getIssuesSize(), Team.getMembersSize(), teamResult.members)
+        return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }
 
 
