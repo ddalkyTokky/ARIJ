@@ -1,9 +1,6 @@
 package com.arij.ajir.domain.member.controller
 
-import com.arij.ajir.domain.member.dto.MemberCreateRequest
-import com.arij.ajir.domain.member.dto.MemberNicknameUpdateRequest
-import com.arij.ajir.domain.member.dto.MemberPasswordUpdateRequest
-import com.arij.ajir.domain.member.dto.MemberResponse
+import com.arij.ajir.domain.member.dto.*
 import com.arij.ajir.domain.member.service.MemberService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -23,7 +20,11 @@ class MemberController (
     }
 
     @PostMapping("login")
-    fun login(@RequestBody )
+    fun login(@RequestBody @Valid loginRequest: LoginRequest): ResponseEntity<LoginResponse>{
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(memberService.login(loginRequest))
+    }
 
     @PatchMapping("/nickname")
     fun updateMemberNickname(@RequestBody @Valid memberNicknameUpdateRequest: MemberNicknameUpdateRequest): ResponseEntity<MemberResponse> {
