@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.team.service
 
+import com.arij.ajir.common.dto.UserProfileDto
 import com.arij.ajir.common.exception.DuplicateArgumentException
 import com.arij.ajir.common.exception.ModelNotFoundException
 import com.arij.ajir.common.exception.NotAuthorityException
@@ -22,7 +23,7 @@ class TeamService(
     private val memberRepository: MemberRepository
 ) {
 
-    fun createTeams(teamRequest: TeamRequest, email: String): TeamResponse {
+    fun createTeams(teamRequest: TeamRequest, userProfileDto: UserProfileDto): TeamResponse {
 
         if(teamRepository.existsByName(teamRequest.name)) throw DuplicateArgumentException("Team", teamRequest.name)
         val teamResult = teamRepository.save(
@@ -30,7 +31,7 @@ class TeamService(
                 name = teamRequest.name,
             )
         )
-        val leader = memberRepository.findByEmail(email)
+        val leader = memberRepository.findByEmail(userProfileDto.email)
 
         teamResult.let { leader?.giveTeam(it) }
 
@@ -38,7 +39,7 @@ class TeamService(
     }
 
     @Transactional(readOnly = true)
-    fun getTeamList(name: String, email: String): List<TeamResponse> {
+    fun getTeamList(name: String, userProfileDto: UserProfileDto): List<TeamResponse> {
         val admin = memberRepository.findByEmail(email)
         if(admin?.role == Role.ADMIN) throw NotAuthorityException("권한이 없습니다", admin.role.name)
 
@@ -49,7 +50,7 @@ class TeamService(
     }
 
     @Transactional(readOnly = true)
-    fun getTeamById(teamId: Long, email: String): TeamResponse {
+    fun getTeamById(teamId: Long, userProfileDto: UserProfileDto): TeamResponse {
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         
         //TODO("권한이 사용자 와 리더 일 경우 teamId 가 authentication 에서 teamName 을 비교 후에 일치 하지 않으면 throw illegalArgumentException")
@@ -61,7 +62,7 @@ class TeamService(
         return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }
 
-    fun updateTeamById(teamId: Long, teamRequest: TeamRequest, email: String): TeamResponse {
+    fun updateTeamById(teamId: Long, teamRequest: TeamRequest, userProfileDto: UserProfileDto): TeamResponse {
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         //TODO("권한이 사용자 와 리더 일 경우 teamId 가 authentication 에서 teamName 을 비교 후에 일치 하지 않으면 throw illegalArgumentException")
         //TODO("권한이 관리자일 경우 소속팀 여부와 상관 없이 모두 조회 가능")
@@ -72,7 +73,7 @@ class TeamService(
         return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }
 
-    fun deleteTeamById(teamId: Long, email: String) {
+    fun deleteTeamById(teamId: Long, userProfileDto: UserProfileDto) {
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         //TODO("권한이 리더 일 경우 teamId 가 authentication 에서 teamName 을 비교 후에 일치 하지 않으면 throw illegalArgumentException")
         //TODO("권한이 관리자 일 경우 소속팀 여부와 상관 없이 모두 삭제 가능")
@@ -82,7 +83,7 @@ class TeamService(
         teamRepository.delete(teamResult)
     }
 
-    fun inviteMember(memberId: Long, email: String): TeamResponse {
+    fun inviteMember(memberId: Long, userProfileDto: UserProfileDto): TeamResponse {
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         //TODO("소속 팀의 리더가 아닐 경우 throw NotAuthenticatedException")
         val leader = memberRepository.findByIdOrNull(6L) ?: throw ModelNotFoundException("Member", memberId.toString())
@@ -97,7 +98,7 @@ class TeamService(
         return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }
 
-    fun firedMember(memberId: Long, email: String):TeamResponse{
+    fun firedMember(memberId: Long, userProfileDto: UserProfileDto):TeamResponse{
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         //TODO("소속 팀의 리더나 관리자 가 아닐 경우 throw NotAuthenticatedException")
         //TODO("memberId 를 조회 시 없을 경우 throw ModelNotFoundException")

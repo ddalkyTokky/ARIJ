@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.team.controller
 
+import com.arij.ajir.common.dto.UserProfileDto
 import com.arij.ajir.common.exception.TokenException
 import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
@@ -35,9 +36,10 @@ class TeamController(
     ): ResponseEntity<TeamResponse> {
         val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
         val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
-        println()
+        val role: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("role").toString()
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(teamService.createTeams(teamRequest, email))
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(teamService.createTeams(teamRequest, UserProfileDto.from(email, role)))
     }
 
     @GetMapping
@@ -48,8 +50,9 @@ class TeamController(
 
         val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
         val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
+        val role: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("role").toString()
 
-        return ResponseEntity.status(HttpStatus.OK).body(teamService.getTeamList(name, email))
+        return ResponseEntity.status(HttpStatus.OK).body(teamService.getTeamList(name, UserProfileDto.from(email, role)))
     }
 
     @GetMapping("/{teamId}")
@@ -59,8 +62,9 @@ class TeamController(
     ): ResponseEntity<TeamResponse>{
         val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
         val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
+        val role: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("role").toString()
 
-        return ResponseEntity.status(HttpStatus.OK).body(teamService.getTeamById(teamId, email))
+        return ResponseEntity.status(HttpStatus.OK).body(teamService.getTeamById(teamId, UserProfileDto.from(email,role)))
     }
 
     @PutMapping("/{teamId}")
@@ -71,8 +75,10 @@ class TeamController(
     ): ResponseEntity<TeamResponse>{
         val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
         val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
+        val role: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("role").toString()
 
-        return ResponseEntity.status(HttpStatus.OK).body(teamService.updateTeamById(teamId, teamRequest, email))
+
+        return ResponseEntity.status(HttpStatus.OK).body(teamService.updateTeamById(teamId, teamRequest, UserProfileDto.from(email,role)))
     }
 
     @DeleteMapping("/{teamId}")
@@ -82,9 +88,10 @@ class TeamController(
     ): ResponseEntity<Unit>{
         val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
         val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
+        val role: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("role").toString()
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
-            teamService.deleteTeamById(teamId, email))
+            teamService.deleteTeamById(teamId, UserProfileDto.from(email,role)))
     }
 
     @PatchMapping("/mates/{memberId}")
@@ -94,8 +101,9 @@ class TeamController(
     ): ResponseEntity<TeamResponse>{
         val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
         val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
+        val role: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("role").toString()
 
-        return ResponseEntity.status(HttpStatus.OK).body(teamService.inviteMember(memberId, email))
+        return ResponseEntity.status(HttpStatus.OK).body(teamService.inviteMember(memberId, UserProfileDto.from(email,role)))
     }
 
     @DeleteMapping("/mates/{memberId}")
@@ -105,8 +113,9 @@ class TeamController(
     ): ResponseEntity<TeamResponse>{
         val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
         val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
+        val role: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("role").toString()
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(teamService.firedMember(memberId, email))
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(teamService.firedMember(memberId, UserProfileDto.from(email,role)))
     }
 
 
