@@ -76,23 +76,23 @@ class MemberService(
     }
 
     fun updatePassword(
-        memberPasswordUpdateRequest: MemberPasswordUpdateRequest,
+        request: MemberPasswordUpdateRequest,
         memberEmail: String
     ) {
         val member = memberRepository.findByEmail(memberEmail) ?: throw ModelNotFoundException("Member", memberEmail)
 
-        if (!bCryptPasswordEncoder.matches(memberPasswordUpdateRequest.oldPw, member.password)
+        if (!bCryptPasswordEncoder.matches(request.oldPw, member.password)
         ) {
             throw InvalidCredentialException()
         }
 
-        if(memberPasswordUpdateRequest.oldPw == memberPasswordUpdateRequest.newPw){
+        if(request.oldPw == request.newPw){
             throw PasswordRecordException()
         }
-        if(bCryptPasswordEncoder.matches(memberPasswordUpdateRequest.newPw, member.password2)){
+        if(bCryptPasswordEncoder.matches(request.newPw, member.password2)){
             throw PasswordRecordException()
             }
-        if(bCryptPasswordEncoder.matches(memberPasswordUpdateRequest.newPw, member.password3)){
+        if(bCryptPasswordEncoder.matches(request.newPw, member.password3)){
             throw PasswordRecordException()
         }
 
@@ -100,7 +100,7 @@ class MemberService(
         member.password2 = member.password
         member.password =
             bCryptPasswordEncoder.encode(
-                memberPasswordUpdateRequest.newPw
+                request.newPw
             )
     }
 
