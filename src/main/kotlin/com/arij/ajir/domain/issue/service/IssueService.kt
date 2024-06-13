@@ -32,7 +32,7 @@ class IssueService(
     }
 
     fun getIssueById(id: Long): IssueResponseWithCommentResponse {
-        val issue = issueRepository.findIssueByIdAndDeleteStatusIsFalse(id)
+        val issue = issueRepository.findIssueByIdAndDeletedIsFalse(id)
             .orElseThrow() { IllegalStateException("Issue not found") }
         val comment = commentRepository.findAllByIssueId(id).map { it.toResponse() }
 
