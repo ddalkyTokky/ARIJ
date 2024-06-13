@@ -60,12 +60,11 @@ class TeamController(
     fun deleteTeamById(
         @PathVariable teamId: Long,
     ): ResponseEntity<Unit>{
-
-        teamService.deleteTeamById(teamId)
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
+            teamService.deleteTeamById(teamId))
     }
 
-    @PatchMapping("/{memberId}")
+    @PatchMapping("/mates/{memberId}")
     fun inviteMember(
         @PathVariable memberId: Long,
     ): ResponseEntity<TeamResponse>{
@@ -73,7 +72,7 @@ class TeamController(
         return ResponseEntity.status(HttpStatus.OK).body(teamService.inviteMember(memberId))
     }
 
-    @DeleteMapping("/{memberId}")
+    @DeleteMapping("/mates/{memberId}")
     fun firedMember(
         @PathVariable memberId: Long,
     ): ResponseEntity<TeamResponse>{

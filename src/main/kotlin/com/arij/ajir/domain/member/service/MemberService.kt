@@ -98,10 +98,4 @@ class MemberService(
 
         memberRepository.delete(member)
     }
-
-    fun findById(memberId: Long): Member {
-
-        return memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
-    }
-
 }

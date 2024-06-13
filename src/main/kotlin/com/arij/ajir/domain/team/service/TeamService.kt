@@ -2,6 +2,7 @@ package com.arij.ajir.domain.team.service
 
 import com.arij.ajir.common.exception.DuplicateArgumentException
 import com.arij.ajir.common.exception.ModelNotFoundException
+import com.arij.ajir.domain.member.repository.MemberRepository
 import com.arij.ajir.domain.member.service.MemberService
 import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class TeamService(
     private val teamRepository: TeamRepository,
-    private val memberService : MemberService
+    private val memberRepository: MemberRepository
 ) {
 
     fun createTeams(teamRequest: TeamRequest, /*memberId : Long*/): TeamResponse {
@@ -77,17 +78,17 @@ class TeamService(
         //TODO("권한이 사용자 일 경우 throw NotAuthenticatedException")
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
 
-        return teamRepository.delete(teamResult)
+        teamRepository.delete(teamResult)
     }
 
     fun inviteMember(memberId: Long, /*memberId : Long*/): TeamResponse {
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         //TODO("소속 팀의 리더가 아닐 경우 throw NotAuthenticatedException")
-        val leader = memberService.findById(memberId)
-        val member = memberService.findById(memberId)
+        val leader = memberRepository.findByIdOrNull(6L) ?: throw ModelNotFoundException("Member", memberId.toString())
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
 
         when(member.team!!.id){
-            1L -> member.team!!.id = leader.team!!.id
+            1L -> member.team = leader.team
             leader.team!!.id -> throw DuplicateArgumentException("Team", leader.team!!.id.toString())
             else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
         }
@@ -100,12 +101,12 @@ class TeamService(
         //TODO("소속 팀의 리더나 관리자 가 아닐 경우 throw NotAuthenticatedException")
         //TODO("memberId 를 조회 시 없을 경우 throw ModelNotFoundException")
         //TODO("memberId 의 정보를 가져 왔을 때 팀의 id가 authentication 에서 접근 사용자의 TeamId 와 다를 경우 throw illegalArgumentException")
-        val leader = memberService.findById(memberId)
-        val member = memberService.findById(memberId)
+        val leader = memberRepository.findByIdOrNull(6L) ?: throw ModelNotFoundException("Member", memberId.toString())
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
 
         when(member.team!!.id){
-            leader.team!!.id -> member.team!!.id = 1
-            else -> throw IllegalArgumentException("Team")
+            leader.team!!.id -> member.team = teamRepository.findByIdOrNull(1L) ?: throw ModelNotFoundException("Team", "1L")
+            else -> throw IllegalArgumentException("다른 팀입니다.")
         }
 
         val teamResult = teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
