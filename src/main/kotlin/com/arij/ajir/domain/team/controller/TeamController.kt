@@ -30,10 +30,13 @@ class TeamController(
 
     @PostMapping
     fun createTeams(
+        @RequestHeader httpHeaders: HttpHeaders,
         @Valid @RequestBody teamRequest: TeamRequest
     ): ResponseEntity<TeamResponse> {
+        val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
+        val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(teamService.createTeams(teamRequest))
+        return ResponseEntity.status(HttpStatus.CREATED).body(teamService.createTeams(teamRequest, email))
     }
 
     @GetMapping
@@ -50,45 +53,59 @@ class TeamController(
 
     @GetMapping("/{teamId}")
     fun getTeamById(
+        @RequestHeader httpHeaders: HttpHeaders,
         @PathVariable teamId: Long
     ): ResponseEntity<TeamResponse>{
+        val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
+        val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
 
-        return ResponseEntity.status(HttpStatus.OK).body(teamService.getTeamById(teamId))
+        return ResponseEntity.status(HttpStatus.OK).body(teamService.getTeamById(teamId, email))
     }
 
     @PutMapping("/{teamId}")
     fun updateTeamById(
+        @RequestHeader httpHeaders: HttpHeaders,
         @PathVariable teamId: Long,
         @Valid @RequestBody teamRequest: TeamRequest
     ): ResponseEntity<TeamResponse>{
+        val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
+        val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
 
-        return ResponseEntity.status(HttpStatus.OK).body(teamService.updateTeamById(teamId, teamRequest))
+        return ResponseEntity.status(HttpStatus.OK).body(teamService.updateTeamById(teamId, teamRequest, email))
     }
 
     @DeleteMapping("/{teamId}")
     fun deleteTeamById(
+        @RequestHeader httpHeaders: HttpHeaders,
         @PathVariable teamId: Long,
     ): ResponseEntity<Unit>{
+        val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
+        val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
-            teamService.deleteTeamById(teamId))
+            teamService.deleteTeamById(teamId, email))
     }
 
     @PatchMapping("/mates/{memberId}")
     fun inviteMember(
+        @RequestHeader httpHeaders: HttpHeaders,
         @PathVariable memberId: Long,
     ): ResponseEntity<TeamResponse>{
+        val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
+        val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
 
-        return ResponseEntity.status(HttpStatus.OK).body(teamService.inviteMember(memberId))
+        return ResponseEntity.status(HttpStatus.OK).body(teamService.inviteMember(memberId, email))
     }
 
     @DeleteMapping("/mates/{memberId}")
     fun firedMember(
+        @RequestHeader httpHeaders: HttpHeaders,
         @PathVariable memberId: Long,
     ): ResponseEntity<TeamResponse>{
+        val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
+        val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
 
-        teamService.firedMember(memberId)
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(teamService.firedMember(memberId, email))
     }
 
 
