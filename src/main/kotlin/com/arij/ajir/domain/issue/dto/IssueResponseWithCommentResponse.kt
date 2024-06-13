@@ -13,6 +13,6 @@ data class IssueResponseWithCommentResponse (
     val content: String,
     val priority: Priority,
     val category: String,
-    val deleteStatus: Boolean,
+    val deleted: Boolean,
     val comments: List<CommentResponse>
 )
