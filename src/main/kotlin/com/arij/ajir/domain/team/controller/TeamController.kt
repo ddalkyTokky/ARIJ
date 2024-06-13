@@ -6,11 +6,7 @@ import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
 import com.arij.ajir.domain.team.service.TeamService
 import com.arij.ajir.infra.security.UserPrincipal
-import com.arij.ajir.infra.security.jwt.JwtPlugin
 import jakarta.validation.Valid
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -20,14 +16,13 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/teams")
 class TeamController(
     private val teamService: TeamService,
-    private val jwtPlugin: JwtPlugin
 ){
 
     @PostMapping
     fun createTeams(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @Valid @RequestBody teamRequest: TeamRequest,
-    ): ResponseEntity<TeamResponse> {
+    ): ResponseEntity<String> {
 
         if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
 
@@ -62,7 +57,7 @@ class TeamController(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable teamId: Long,
         @Valid @RequestBody teamRequest: TeamRequest
-    ): ResponseEntity<TeamResponse>{
+    ): ResponseEntity<Unit>{
 
         if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
 
@@ -86,7 +81,7 @@ class TeamController(
     fun inviteMember(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable memberId: Long,
-    ): ResponseEntity<TeamResponse>{
+    ): ResponseEntity<Unit>{
 
         if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
 
@@ -97,7 +92,7 @@ class TeamController(
     fun firedMember(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable memberId: Long,
-    ): ResponseEntity<TeamResponse>{
+    ): ResponseEntity<Unit>{
 
         if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
 

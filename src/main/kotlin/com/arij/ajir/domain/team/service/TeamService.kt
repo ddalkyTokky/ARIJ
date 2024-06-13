@@ -22,7 +22,7 @@ class TeamService(
     private val memberRepository: MemberRepository
 ) {
 
-    fun createTeams(teamRequest: TeamRequest, userProfileDto: UserProfileDto): TeamResponse {
+    fun createTeams(teamRequest: TeamRequest, userProfileDto: UserProfileDto): String {
 
         if(teamRepository.existsByName(teamRequest.name)) throw DuplicateArgumentException("Team", teamRequest.name)
         val teamResult = teamRepository.save(
@@ -34,7 +34,7 @@ class TeamService(
 
         teamResult.let { leader?.giveTeam(it) }
 
-        return TeamResponse.from(teamResult, teamResult.getIssuesSize(), 1, mutableListOf(leader!!))
+        return "TeamId : ${teamResult.id}"
     }
 
     @Transactional(readOnly = true)
@@ -66,7 +66,7 @@ class TeamService(
         return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }
 
-    fun updateTeamById(teamId: Long, teamRequest: TeamRequest, userProfileDto: UserProfileDto): TeamResponse {
+    fun updateTeamById(teamId: Long, teamRequest: TeamRequest, userProfileDto: UserProfileDto) {
 
         if(userProfileDto.role == Role.USER.name || userProfileDto.role == Role.LEADER.name){
             val member = memberRepository.findByEmail(userProfileDto.email)
@@ -77,7 +77,6 @@ class TeamService(
 
         teamResult.name = teamRequest.name
 
-        return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }
 
     fun deleteTeamById(teamId: Long, userProfileDto: UserProfileDto) {
@@ -99,7 +98,7 @@ class TeamService(
         teamRepository.delete(teamResult)
     }
 
-    fun inviteMember(memberId: Long, userProfileDto: UserProfileDto): TeamResponse {
+    fun inviteMember(memberId: Long, userProfileDto: UserProfileDto) {
         if(userProfileDto.role != Role.LEADER.name) throw NotAuthorityException("해당 맴버는 리더가 아닙니다", userProfileDto.role)
 
         val leader = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("Member", memberId.toString())
@@ -110,12 +109,11 @@ class TeamService(
             leader.team!!.id -> throw DuplicateArgumentException("Team", leader.team!!.id.toString())
             else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
         }
-        val teamResult = teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
+        teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
 
-        return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }
 
-    fun firedMember(memberId: Long, userProfileDto: UserProfileDto):TeamResponse{
+    fun firedMember(memberId: Long, userProfileDto: UserProfileDto){
         if(userProfileDto.role != Role.LEADER.name || userProfileDto.role != Role.ADMIN.name) throw NotAuthorityException("리더와 관리자만 접근이 가능 합니다", userProfileDto.role)
 
         val leader = memberRepository.findByIdOrNull(6L) ?: throw ModelNotFoundException("Member", memberId.toString())
@@ -126,8 +124,7 @@ class TeamService(
             else -> throw IllegalArgumentException("다른 팀입니다.")
         }
 
-        val teamResult = teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
-        return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
+        teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
     }
 
 
