@@ -13,21 +13,25 @@ import org.springframework.context.annotation.Configuration
 class SwaggerConfig {
 
     @Bean
-    fun openApi(): OpenAPI {
-        val apiKey = SecurityScheme() // 보안 스키마 정의
-            .type(SecurityScheme.Type.APIKEY) // APIKEY를 사용
-            .`in`(SecurityScheme.In.HEADER) // APIKEY는 "header"에 위치
-            .name("Authorization") // APIKEY의 이름이 "Authorization"
-
-        val securityRequirement = SecurityRequirement() // API의 보안 요구사항 정의
-            .addList("Bearer Token") // 보안 요구사항으로 "Bearer Token" 추가
-
-        return OpenAPI()
-            .components( // OpenAPI 객체의 컴포넌트를 설정
-                Components()
-                    .addSecuritySchemes("Bearer Token", apiKey) // 컴포넌트에 이름이 "Bearer Token"인 보안 스키마 추가
+    fun openAPI(): OpenAPI = OpenAPI()
+        .addSecurityItem(
+            SecurityRequirement().addList("Bearer Authentication")
+        )
+        .components(
+            Components().addSecuritySchemes(
+                "Bearer Authentication",
+                SecurityScheme()
+                    .type(SecurityScheme.Type.HTTP)
+                    .scheme("Bearer")
+                    .bearerFormat("JWT")
+                    .`in`(SecurityScheme.In.HEADER)
+                    .name("Authorization")
             )
-            .addSecurityItem(securityRequirement) // 보안 요구사항 추가
-            .info(Info().title("Todo API").description("Todo API schema").version("1.0.0"))
-    }
+        )
+        .info(
+            Info()
+                .title("AJIR API")
+                .description("테스트하려고 만든 것 나중에 지워질지도?")
+                .version("1.0.0")
+        )
 }
