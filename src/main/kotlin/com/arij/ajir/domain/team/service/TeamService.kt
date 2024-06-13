@@ -2,6 +2,7 @@ package com.arij.ajir.domain.team.service
 
 import com.arij.ajir.common.exception.DuplicateArgumentException
 import com.arij.ajir.common.exception.ModelNotFoundException
+import com.arij.ajir.common.exception.NotAuthorityException
 import com.arij.ajir.domain.member.model.Role
 import com.arij.ajir.domain.member.repository.MemberRepository
 import com.arij.ajir.domain.member.service.MemberService
