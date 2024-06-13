@@ -112,10 +112,8 @@ class TeamService(
     }
 
     fun firedMember(memberId: Long, userProfileDto: UserProfileDto):TeamResponse{
-        //TODO("authentication 에서 접근 사용자의 권한 확인")
-        //TODO("소속 팀의 리더나 관리자 가 아닐 경우 throw NotAuthenticatedException")
-        //TODO("memberId 를 조회 시 없을 경우 throw ModelNotFoundException")
-        //TODO("memberId 의 정보를 가져 왔을 때 팀의 id가 authentication 에서 접근 사용자의 TeamId 와 다를 경우 throw illegalArgumentException")
+        if(userProfileDto.role != Role.LEADER.name || userProfileDto.role != Role.ADMIN.name) throw NotAuthorityException("리더와 관리자만 접근이 가능 합니다", userProfileDto.role)
+
         val leader = memberRepository.findByIdOrNull(6L) ?: throw ModelNotFoundException("Member", memberId.toString())
         val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
 
