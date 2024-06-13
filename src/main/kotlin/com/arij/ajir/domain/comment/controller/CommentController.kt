@@ -21,40 +21,43 @@ class CommentController(
 
     @PostMapping("/{issueId}")
     fun createComment(
-        @AuthenticationPrincipal test: UserPrincipal?,
+        @AuthenticationPrincipal person: UserPrincipal?,
         @PathVariable issueId: Long,
         @RequestBody request: CommentCreateRequest
     ): ResponseEntity<CommentResponse> {
 
+        if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(commentService.createComment(issueId, request))
+            .body(commentService.createComment(issueId, request, person))
     }
 
     @PutMapping("/{commentId}")
     fun updateComment(
-        @AuthenticationPrincipal test: UserPrincipal?,
+        @AuthenticationPrincipal person: UserPrincipal?,
         @PathVariable commentId: Long,
         @RequestBody request: CommentUpdateRequest
     ): ResponseEntity<CommentResponse> {
 
+        if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(commentService.updateComment(commentId, request))
+            .body(commentService.updateComment(commentId, request, person))
     }
 
     @DeleteMapping("/{commentId}")
     fun deleteComment(
-        @AuthenticationPrincipal test: UserPrincipal?,
+        @AuthenticationPrincipal person: UserPrincipal?,
         @PathVariable commentId: Long
     ): ResponseEntity<Unit> {
 
+        if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
 
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
-            .body(commentService.deleteComment(commentId))
+            .body(commentService.deleteComment(commentId, person))
     }
 
 

@@ -8,17 +8,19 @@ import com.arij.ajir.domain.comment.model.toResponse
 import com.arij.ajir.domain.comment.repository.CommentRepository
 import com.arij.ajir.domain.issue.repository.IssueRepository
 import com.arij.ajir.domain.member.repository.MemberRepository
+import com.arij.ajir.infra.security.UserPrincipal
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
+@Transactional
 class CommentService(
     private val commentRepository: CommentRepository,
     private val memberRepository: MemberRepository,
     private val issueRepository: IssueRepository
 ) {
-    fun createComment(issueId: Long, request: CommentCreateRequest): CommentResponse {
+    fun createComment(issueId: Long, request: CommentCreateRequest, person: UserPrincipal): CommentResponse {
         /* TODO
             1. issue가 존재하는지 확인 --> 없다면 에러
             2. member가 존재하는지 확인 --> 없다면 에러 <== 인증 인가가 되면 없어도 됨
@@ -41,8 +43,7 @@ class CommentService(
         return comment.toResponse()
     }
 
-    @Transactional
-    fun updateComment(commentId: Long, request: CommentUpdateRequest): CommentResponse {
+    fun updateComment(commentId: Long, request: CommentUpdateRequest, person: UserPrincipal): CommentResponse {
         /* TODO
             1. DB에서 Comment 가져오기 --> 없으면 에러
             2-1. comment의 내용 수정
@@ -61,8 +62,7 @@ class CommentService(
         return comment.toResponse()
     }
 
-    @Transactional
-    fun deleteComment(commentId: Long): Unit {
+    fun deleteComment(commentId: Long, person: UserPrincipal): Unit {
         /* TODO
             1. DB에서 Comment 가져오기 --> 없으면 에러
             2. comment 삭제
