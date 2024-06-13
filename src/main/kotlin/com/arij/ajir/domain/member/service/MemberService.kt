@@ -3,6 +3,7 @@ package com.arij.ajir.domain.member.service
 import com.arij.ajir.common.exception.DuplicateArgumentException
 import com.arij.ajir.common.exception.InvalidCredentialException
 import com.arij.ajir.common.exception.ModelNotFoundException
+import com.arij.ajir.common.exception.PasswordRecordException
 import com.arij.ajir.domain.member.dto.*
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.model.Role
@@ -38,6 +39,8 @@ class MemberService(
             it.role = Role.USER
             it.email = memberCreateRequest.email
             it.password = bCryptPasswordEncoder.encode(memberCreateRequest.password)
+            it.password2 = "password2"
+            it.password2 = "password3"
             it.nickname = memberCreateRequest.nickname
         }
         memberRepository.save(member)
@@ -83,6 +86,18 @@ class MemberService(
             throw InvalidCredentialException()
         }
 
+        if(memberPasswordUpdateRequest.oldPw == memberPasswordUpdateRequest.newPw){
+            throw PasswordRecordException()
+        }
+        if(bCryptPasswordEncoder.matches(memberPasswordUpdateRequest.newPw, member.password2)){
+            throw PasswordRecordException()
+            }
+        if(bCryptPasswordEncoder.matches(memberPasswordUpdateRequest.newPw, member.password3)){
+            throw PasswordRecordException()
+        }
+
+        member.password3= member.password2
+        member.password2 = member.password
         member.password =
             bCryptPasswordEncoder.encode(
                 memberPasswordUpdateRequest.newPw
