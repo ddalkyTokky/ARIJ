@@ -79,7 +79,7 @@ class Issue(
         return this
     }
 
-    fun delete() = { deleteStatus = true }
+    fun delete() { deleteStatus = true }
 
     fun toResponse(): IssueResponse {
         return IssueResponse(
