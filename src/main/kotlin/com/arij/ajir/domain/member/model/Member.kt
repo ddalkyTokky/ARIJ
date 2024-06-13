@@ -47,7 +47,8 @@ class Member (
         )
     }
 
-    fun giveTeamId(teamId: Long){
-        this.team?.id = teamId
+    fun giveTeam(team: Team){
+        this.team = team
+        this.role = Role.LEADER
     }
 }

@@ -8,7 +8,6 @@ import io.swagger.v3.oas.models.security.SecurityScheme
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-
 @Configuration
 class SwaggerConfig {
 
@@ -34,4 +33,5 @@ class SwaggerConfig {
                 .description("테스트하려고 만든 것 나중에 지워질지도?")
                 .version("1.0.0")
         )
+
 }
