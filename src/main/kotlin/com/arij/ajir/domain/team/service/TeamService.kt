@@ -5,7 +5,7 @@ import com.arij.ajir.common.exception.ModelNotFoundException
 import com.arij.ajir.domain.member.service.MemberService
 import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
-import com.arij.ajir.domain.team.entity.Team
+import com.arij.ajir.domain.team.model.Team
 import com.arij.ajir.domain.team.repository.TeamRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service

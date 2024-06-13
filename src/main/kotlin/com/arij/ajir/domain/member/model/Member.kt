@@ -2,7 +2,7 @@ package com.arij.ajir.domain.member.model
 
 import com.arij.ajir.common.exception.ModelNotSavedException
 import com.arij.ajir.domain.member.dto.MemberResponse
-import com.arij.ajir.domain.team.entity.Team
+import com.arij.ajir.domain.team.model.Team
 import jakarta.persistence.*
 import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType

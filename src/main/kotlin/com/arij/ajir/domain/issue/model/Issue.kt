@@ -6,7 +6,7 @@ import com.arij.ajir.domain.issue.dto.IssueCreateRequest
 import com.arij.ajir.domain.issue.dto.IssueResponse
 import com.arij.ajir.domain.issue.dto.IssueUpdateRequest
 import com.arij.ajir.domain.member.model.Member
-import com.arij.ajir.domain.team.entity.Team
+import com.arij.ajir.domain.team.model.Team
 import jakarta.persistence.*
 import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType

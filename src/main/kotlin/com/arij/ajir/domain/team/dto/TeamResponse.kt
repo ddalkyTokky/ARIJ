@@ -1,7 +1,7 @@
 package com.arij.ajir.domain.team.dto
 
 import com.arij.ajir.domain.member.model.Member
-import com.arij.ajir.domain.team.entity.Team
+import com.arij.ajir.domain.team.model.Team
 
 data class TeamResponse(
     val teamId: Long,

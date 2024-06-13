@@ -1,4 +1,4 @@
-package com.arij.ajir.domain.team.entity
+package com.arij.ajir.domain.team.model
 
 import com.arij.ajir.domain.issue.model.Issue
 import com.arij.ajir.domain.member.model.Member
