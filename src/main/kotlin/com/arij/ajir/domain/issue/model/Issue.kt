@@ -31,7 +31,7 @@ class Issue(
     @Column(name = "created_at", nullable = false)
     var createdAt: Timestamp,
 
-    @Column(nullable = false)
+    @Column(name ="deleted", nullable = false)
     var deleted: Boolean = false,
 
     @Enumerated(EnumType.STRING)
