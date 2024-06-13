@@ -40,7 +40,7 @@ class MemberService(
             it.email = memberCreateRequest.email
             it.password = bCryptPasswordEncoder.encode(memberCreateRequest.password)
             it.password2 = "password2"
-            it.password2 = "password3"
+            it.password3 = "password3"
             it.nickname = memberCreateRequest.nickname
         }
         memberRepository.save(member)
