@@ -20,8 +20,6 @@ class IssueService(
     private val memberRepository: MemberRepository,
     private val teamRepository: TeamRepository,
     private val commentRepository: CommentRepository,
-    // todo(private val memberRepository: MemberRepository,
-    // todo(private val teamRepository: TeamRepository,
 ) {
     fun getAllIssues(
         topic: String,
