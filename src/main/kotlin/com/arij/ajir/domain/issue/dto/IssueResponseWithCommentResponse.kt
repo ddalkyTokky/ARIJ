@@ -1,9 +1,10 @@
 package com.arij.ajir.domain.issue.dto
 
+import com.arij.ajir.domain.comment.dto.CommentResponse
 import com.arij.ajir.domain.issue.model.Priority
 import java.sql.Timestamp
 
-data class IssueResponse(
+data class IssueResponseWithCommentResponse (
     val id: Long,
     val title: String,
     val author: String,
@@ -13,4 +14,5 @@ data class IssueResponse(
     val priority: Priority,
     val category: String,
     val deleted: Boolean,
+    val comments: List<CommentResponse>
 )
