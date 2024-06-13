@@ -47,7 +47,7 @@ class Issue(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
-    @OneToMany(mappedBy = "issue", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "issue", fetch = FetchType.LAZY, orphanRemoval = true, cascade = [CascadeType.REMOVE])
     val comments: MutableList<Comment> = mutableListOf()
 
     companion object {

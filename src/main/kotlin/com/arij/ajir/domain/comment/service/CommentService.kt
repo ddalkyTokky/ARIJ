@@ -6,13 +6,17 @@ import com.arij.ajir.domain.comment.dto.CommentUpdateRequest
 import com.arij.ajir.domain.comment.model.Comment
 import com.arij.ajir.domain.comment.model.toResponse
 import com.arij.ajir.domain.comment.repository.CommentRepository
+import com.arij.ajir.domain.issue.repository.IssueRepository
+import com.arij.ajir.domain.member.repository.MemberRepository
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class CommentService(
-    private val commentRepository: CommentRepository
+    private val commentRepository: CommentRepository,
+    private val memberRepository: MemberRepository,
+    private val issueRepository: IssueRepository
 ) {
     fun createComment(issueId: Long, request: CommentCreateRequest): CommentResponse {
         /* TODO
@@ -29,8 +33,8 @@ class CommentService(
 
         val comment: Comment = Comment(
             content = request.content,
-            issueId = issueId,
-            memberId = 1 // 나중에 인가 구현되면 바뀜
+            issue = issueRepository.findByIdOrNull(1L)!!, //TODO 임시 코드. 수정필요.
+            member = memberRepository.findByIdOrNull(1L)!!
         )
         commentRepository.save(comment)
 
