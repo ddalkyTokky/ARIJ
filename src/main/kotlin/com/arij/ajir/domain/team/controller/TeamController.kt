@@ -24,7 +24,7 @@ class TeamController(
     fun createTeams(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @Valid @RequestBody teamRequest: TeamRequest,
-    ): ResponseEntity<TeamResponse> {
+    ): ResponseEntity<String> {
 
         if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
 
@@ -59,7 +59,7 @@ class TeamController(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable teamId: Long,
         @Valid @RequestBody teamRequest: TeamRequest
-    ): ResponseEntity<TeamResponse>{
+    ): ResponseEntity<Unit>{
 
         if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
 
@@ -83,7 +83,7 @@ class TeamController(
     fun inviteMember(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable memberId: Long,
-    ): ResponseEntity<TeamResponse>{
+    ): ResponseEntity<Unit>{
 
         if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
 
@@ -94,7 +94,7 @@ class TeamController(
     fun firedMember(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable memberId: Long,
-    ): ResponseEntity<TeamResponse>{
+    ): ResponseEntity<Unit>{
 
         if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
 
