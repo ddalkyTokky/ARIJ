@@ -96,9 +96,9 @@ class TeamService(
     }
 
     fun inviteMember(memberId: Long, userProfileDto: UserProfileDto): TeamResponse {
-        //TODO("authentication 에서 접근 사용자의 권한 확인")
-        //TODO("소속 팀의 리더가 아닐 경우 throw NotAuthenticatedException")
-        val leader = memberRepository.findByIdOrNull(6L) ?: throw ModelNotFoundException("Member", memberId.toString())
+        if(userProfileDto.role != Role.LEADER.name) throw NotAuthorityException("해당 맴버는 리더가 아닙니다", userProfileDto.role)
+
+        val leader = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("Member", memberId.toString())
         val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
 
         when(member.team!!.id){
@@ -107,6 +107,7 @@ class TeamService(
             else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
         }
         val teamResult = teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
+
         return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }
 
