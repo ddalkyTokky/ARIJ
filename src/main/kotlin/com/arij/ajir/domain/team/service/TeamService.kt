@@ -77,11 +77,20 @@ class TeamService(
     }
 
     fun deleteTeamById(teamId: Long, userProfileDto: UserProfileDto) {
-        //TODO("authentication 에서 접근 사용자의 권한 확인")
-        //TODO("권한이 리더 일 경우 teamId 가 authentication 에서 teamName 을 비교 후에 일치 하지 않으면 throw illegalArgumentException")
-        //TODO("권한이 관리자 일 경우 소속팀 여부와 상관 없이 모두 삭제 가능")
-        //TODO("권한이 사용자 일 경우 throw NotAuthenticatedException")
+        when(userProfileDto.role) {
+            Role.LEADER.name ->{
+                val member = memberRepository.findByEmail(userProfileDto.email)
+                if(member?.team?.id != teamId) throw IllegalArgumentException("다른 팀을 선택 하셨습니다 사용 권한이 없습니다")
+            }
+            Role.USER.name -> throw NotAuthorityException("사용 권한이 없습니다", userProfileDto.role)
+        }
+
+        if(teamId == 1L) throw IllegalArgumentException("기본 팀은 선택할 수 없습니다")
+
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
+        val dummyTeam = teamRepository.findByIdOrNull(1L)!!
+
+        teamResult.members.map{ it.team = dummyTeam }
 
         teamRepository.delete(teamResult)
     }
