@@ -49,10 +49,15 @@ class IssueService(
     }
 
     @Transactional
-    fun updateIssue(issueId: Long, request: IssueUpdateRequest) {
+    fun updateIssue(issueId: Long, request: IssueUpdateRequest, email: String) {
         val (title, content, category) = request
+        val member: Member = memberRepository.findByEmail(email) ?: throw ModelNotFoundException("Member", email)
         val issue = issueRepository.findIssueByIdAndDeletedIsFalse(issueId)
             .orElseThrow() { IllegalStateException("Issue not found") }
+
+        if (issue.member != member && issue.team != member.team) {
+            throw IllegalStateException("member and team not same")
+        }
 
         issue.title = title
         issue.content = content
@@ -60,16 +65,27 @@ class IssueService(
     }
 
     @Transactional
-    fun updatePriority(issueId: Long, newPriority: Priority) {
+    fun updatePriority(issueId: Long, newPriority: Priority, email: String) {
+        val member: Member = memberRepository.findByEmail(email) ?: throw ModelNotFoundException("Member", email)
         val issue = issueRepository.findIssueByIdAndDeletedIsFalse(issueId)
             .orElseThrow() { IllegalStateException("Issue not found") }
+
+        if (issue.team != member.team) {
+            throw IllegalStateException("team not same")
+        }
+
         issue.priority = newPriority
     }
 
     @Transactional
-    fun deleteIssue(id: Long) {
+    fun deleteIssue(id: Long, email: String) {
+        val member: Member = memberRepository.findByEmail(email) ?: throw ModelNotFoundException("Member", email)
         val issue = issueRepository.findIssueByIdAndDeletedIsFalse(id)
             .orElseThrow() { IllegalStateException("Issue not found") }
+
+        if (issue.team != member.team) {
+            throw IllegalStateException("team not same")
+        }
 
         issue.delete()
         issueRepository.save(issue)
