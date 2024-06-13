@@ -43,5 +43,6 @@ class Member (
 
     fun giveTeam(team: Team){
         this.team = team
+        this.role = Role.LEADER
     }
 }

@@ -11,6 +11,7 @@ import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
 import com.arij.ajir.domain.team.model.Team
 import com.arij.ajir.domain.team.repository.TeamRepository
+import com.arij.ajir.infra.security.UserPrincipal
 import jakarta.validation.constraints.Email
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
