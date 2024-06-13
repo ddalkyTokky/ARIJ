@@ -1,6 +1,7 @@
 package com.arij.ajir.domain.issue.model
 
 import com.arij.ajir.domain.comment.model.Comment
+import com.arij.ajir.domain.comment.model.toResponse
 import com.arij.ajir.domain.issue.dto.IssueCreateRequest
 import com.arij.ajir.domain.issue.dto.IssueResponse
 import com.arij.ajir.domain.issue.dto.IssueUpdateRequest
@@ -91,6 +92,7 @@ class Issue(
             priority = this.priority,
             category = this.category,
             deleteStatus = this.deleteStatus,
+            comments = this.comments.map { it.toResponse() }
         )
     }
 }
