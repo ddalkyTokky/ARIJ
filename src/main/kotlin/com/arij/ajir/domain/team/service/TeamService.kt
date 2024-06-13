@@ -34,8 +34,7 @@ class TeamService(
 
         teamResult.let { leader?.giveTeam(it) }
 
-        //TODO("TeamResponse 에 작성된 팀 정보 반환")
-        return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
+        return TeamResponse.from(teamResult, teamResult.getIssuesSize(), 1, mutableListOf(leader!!))
     }
 
     @Transactional(readOnly = true)

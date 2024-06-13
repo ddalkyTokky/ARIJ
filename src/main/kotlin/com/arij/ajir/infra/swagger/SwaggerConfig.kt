@@ -8,7 +8,6 @@ import io.swagger.v3.oas.models.security.SecurityScheme
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-// 나중에 지워질 것
 @Configuration
 class SwaggerConfig {
 

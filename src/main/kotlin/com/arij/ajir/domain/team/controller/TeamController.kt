@@ -35,6 +35,7 @@ class TeamController(
     ): ResponseEntity<TeamResponse> {
         val token: String = httpHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
         val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
+        println()
 
         return ResponseEntity.status(HttpStatus.CREATED).body(teamService.createTeams(teamRequest, email))
     }
