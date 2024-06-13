@@ -10,6 +10,7 @@ import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
 import com.arij.ajir.domain.team.model.Team
 import com.arij.ajir.domain.team.repository.TeamRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -37,11 +38,16 @@ class TeamService(
     }
 
     @Transactional(readOnly = true)
-    fun getTeamList(name: String, userProfileDto: UserProfileDto): List<TeamResponse> {
+    fun getTeamList(name: String?, userProfileDto: UserProfileDto): List<TeamResponse> {
 
         if(userProfileDto.role == Role.ADMIN.name) throw NotAuthorityException("권한이 없습니다", userProfileDto.role)
 
-        val teamResult = teamRepository.findAll()
+        val teamResult = if(name == null || name == ""){
+           teamRepository.findAll()
+        }else{
+            teamRepository.findByName(name)
+        }
+
         //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
 
         return teamResult.map{ TeamResponse.from(it, it.getIssuesSize(), it.getMembersSize(), null) }

@@ -8,6 +8,9 @@ import com.arij.ajir.domain.team.service.TeamService
 import com.arij.ajir.infra.security.UserPrincipal
 import com.arij.ajir.infra.security.jwt.JwtPlugin
 import jakarta.validation.Valid
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -34,7 +37,7 @@ class TeamController(
     @GetMapping
     fun getTeamList(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
-        @RequestParam name: String
+        @RequestParam name: String?,
     ): ResponseEntity<List<TeamResponse>>{
 
         if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
