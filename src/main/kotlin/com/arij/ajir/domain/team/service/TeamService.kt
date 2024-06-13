@@ -40,8 +40,8 @@ class TeamService(
 
     @Transactional(readOnly = true)
     fun getTeamList(name: String, userProfileDto: UserProfileDto): List<TeamResponse> {
-        val admin = memberRepository.findByEmail(email)
-        if(admin?.role == Role.ADMIN) throw NotAuthorityException("권한이 없습니다", admin.role.name)
+
+        if(userProfileDto.role == Role.ADMIN.name) throw NotAuthorityException("권한이 없습니다", userProfileDto.role)
 
         val teamResult = teamRepository.findAll()
         //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
@@ -51,9 +51,11 @@ class TeamService(
 
     @Transactional(readOnly = true)
     fun getTeamById(teamId: Long, userProfileDto: UserProfileDto): TeamResponse {
-        //TODO("authentication 에서 접근 사용자의 권한 확인")
-        
-        //TODO("권한이 사용자 와 리더 일 경우 teamId 가 authentication 에서 teamName 을 비교 후에 일치 하지 않으면 throw illegalArgumentException")
+
+        if(userProfileDto.role == Role.USER.name || userProfileDto.role == Role.LEADER.name){
+            val member = memberRepository.findByEmail(userProfileDto.email)
+            if(member?.team?.id != teamId) throw throw IllegalArgumentException("다른 팀을 선택 하셨습니다 사용 권한이 업습니다")
+        }
         
         //TODO("권한이 관리자일 경우 소속팀 여부와 상관 없이 모두 조회 가능")
 
