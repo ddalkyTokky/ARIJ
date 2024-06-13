@@ -19,7 +19,7 @@ class MemberController(
     private val jwtPlugin: JwtPlugin
 ) {
     @PostMapping("/signup")
-    fun emailSignupMember(@RequestBody @Valid memberCreateRequest: MemberCreateRequest): ResponseEntity<MemberResponse> {
+    fun emailSignupMember(@RequestBody @Valid memberCreateRequest: MemberCreateRequest): ResponseEntity<Unit> {
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(memberService.emailSignup(memberCreateRequest))
@@ -36,7 +36,7 @@ class MemberController(
     fun updateMemberNickname(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @RequestBody @Valid memberNicknameUpdateRequest: MemberNicknameUpdateRequest
-    ): ResponseEntity<MemberResponse> {
+    ): ResponseEntity<Unit> {
         if(userPrincipal == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
@@ -51,7 +51,7 @@ class MemberController(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @RequestBody @Valid
         memberPasswordUpdateRequest: MemberPasswordUpdateRequest
-    ): ResponseEntity<MemberResponse> {
+    ): ResponseEntity<Unit> {
         if(userPrincipal == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }

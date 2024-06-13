@@ -16,14 +16,14 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class MemberService(
     private val memberRepository: MemberRepository,
     private val teamRepository: TeamRepository,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
     private val jwtPlugin: JwtPlugin
 ){
-    @Transactional
-    fun emailSignup(memberCreateRequest: MemberCreateRequest): MemberResponse {
+    fun emailSignup(memberCreateRequest: MemberCreateRequest){
         if(memberRepository.existsByEmail(memberCreateRequest.email)){
             throw DuplicateArgumentException("Member", memberCreateRequest.email)
         }
@@ -40,9 +40,10 @@ class MemberService(
             it.password = bCryptPasswordEncoder.encode(memberCreateRequest.password)
             it.nickname = memberCreateRequest.nickname
         }
-        return memberRepository.save(member).toResponse()
+        memberRepository.save(member)
     }
 
+    @Transactional(readOnly = true)
     fun login(loginRequest: LoginRequest): LoginResponse {
         val member = memberRepository.findByEmail(loginRequest.email) ?: throw ModelNotFoundException(
             "Member",
@@ -62,22 +63,19 @@ class MemberService(
         )
     }
 
-    @Transactional
     fun updateNickname(
         memberNicknameUpdateRequest: MemberNicknameUpdateRequest,
         memberEmail: String
-        ): MemberResponse {
+        ) {
         val member = memberRepository.findByEmail(memberEmail) ?: throw ModelNotFoundException("Member", memberEmail)
 
         member.nickname = memberNicknameUpdateRequest.nickname
-        return member.toResponse()
     }
 
-    @Transactional
     fun updatePassword(
         memberPasswordUpdateRequest: MemberPasswordUpdateRequest,
         memberEmail: String
-    ): MemberResponse {
+    ) {
         val member = memberRepository.findByEmail(memberEmail) ?: throw ModelNotFoundException("Member", memberEmail)
 
         if (!bCryptPasswordEncoder.matches(memberPasswordUpdateRequest.oldPw, member.password)
@@ -89,10 +87,8 @@ class MemberService(
             bCryptPasswordEncoder.encode(
                 memberPasswordUpdateRequest.newPw
             )
-        return member.toResponse()
     }
 
-    @Transactional
     fun deleteMember(memberEmail: String) {
         val member = memberRepository.findByEmail(memberEmail) ?: throw ModelNotFoundException("Member", memberEmail)
 
