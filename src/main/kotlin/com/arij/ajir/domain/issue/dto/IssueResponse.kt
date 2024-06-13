@@ -14,5 +14,4 @@ data class IssueResponse(
     val priority: Priority,
     val category: String,
     val deleteStatus: Boolean,
-    val comments: List<CommentResponse>
 )
