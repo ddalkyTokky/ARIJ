@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.issue.model
 
+import com.arij.ajir.domain.comment.model.Comment
 import com.arij.ajir.domain.issue.dto.IssueCreateRequest
 import com.arij.ajir.domain.issue.dto.IssueResponse
 import com.arij.ajir.domain.issue.dto.IssueUpdateRequest
@@ -45,6 +46,9 @@ class Issue(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+
+    @OneToMany(mappedBy = "issue", fetch = FetchType.LAZY, orphanRemoval = true)
+    val comments: MutableList<Comment> = mutableListOf()
 
     companion object {
         fun createIssue(
