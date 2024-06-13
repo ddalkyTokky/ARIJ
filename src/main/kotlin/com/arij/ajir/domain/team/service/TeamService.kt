@@ -9,8 +9,10 @@ import com.arij.ajir.domain.team.model.Team
 import com.arij.ajir.domain.team.repository.TeamRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class TeamService(
     private val teamRepository: TeamRepository,
     private val memberService : MemberService
@@ -35,6 +37,7 @@ class TeamService(
         return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
     }
 
+    @Transactional(readOnly = true)
     fun getTeamList(name: String, /*memberId : Long*/): List<TeamResponse> {
         //TODO("authentication 에서 접근 사용자가 관리자 인지 확인")
         val teamResult = teamRepository.findAll()
@@ -43,6 +46,7 @@ class TeamService(
         return teamResult.map{ TeamResponse.from(it, it.getIssuesSize(), it.getMembersSize(), null) }
     }
 
+    @Transactional(readOnly = true)
     fun getTeamById(teamId: Long, /*memberId : Long*/): TeamResponse {
         //TODO("authentication 에서 접근 사용자의 권한 확인")
         

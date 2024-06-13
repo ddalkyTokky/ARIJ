@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.team.dto
 
+import com.arij.ajir.domain.member.dto.MemberResponse
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.team.model.Team
 
@@ -8,7 +9,7 @@ data class TeamResponse(
     val issueCounts: Long,
     val memberCounts: Long,
     val teamName : String,
-    val members : MutableList<Member>
+    val members : List<MemberResponse>
 ){
     companion object {
         fun from(team: Team, issueCounts: Long, memberCounts: Long, members: MutableList<Member>?):TeamResponse {
@@ -17,7 +18,7 @@ data class TeamResponse(
                 teamName = team.name,
                 issueCounts = issueCounts,
                 memberCounts = memberCounts,
-                members = members ?: mutableListOf()
+                members = members?.map { it.toResponse() } ?: ArrayList()
             )
         }
 
