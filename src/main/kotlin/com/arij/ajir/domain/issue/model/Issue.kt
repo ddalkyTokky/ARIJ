@@ -1,10 +1,8 @@
 package com.arij.ajir.domain.issue.model
 
+import com.arij.ajir.domain.comment.dto.CommentResponse
 import com.arij.ajir.domain.comment.model.Comment
-import com.arij.ajir.domain.comment.model.toResponse
-import com.arij.ajir.domain.issue.dto.IssueCreateRequest
-import com.arij.ajir.domain.issue.dto.IssueResponse
-import com.arij.ajir.domain.issue.dto.IssueUpdateRequest
+import com.arij.ajir.domain.issue.dto.*
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.team.model.Team
 import jakarta.persistence.*
@@ -86,16 +84,38 @@ class Issue(
 
     fun toResponse(): IssueResponse {
         return IssueResponse(
-            id = this.id!!,
-            title = this.title,
-            author = this.member.nickname!!,
-            teamName = this.team.name,
-            createdAt = this.createdAt,
-            content = this.content,
-            priority = this.priority,
-            category = this.category,
-            deleted = this.deleted,
-            comments = this.comments.map { it.toResponse() }
+            id = id!!,
+            title = title,
+            author = member.nickname!!,
+            teamName = team.name,
+            createdAt = createdAt,
+            content = content,
+            priority = priority,
+            category = category,
+            deleted = deleted,
+        )
+    }
+
+    fun toResponseWithCommentResponse(
+        commentResponse: List<CommentResponse>
+    ): IssueResponseWithCommentResponse {
+        return IssueResponseWithCommentResponse(
+            id = id!!,
+            title = title,
+            author = member.nickname!!,
+            teamName = team.name,
+            createdAt = createdAt,
+            content = content,
+            priority = priority,
+            category = category,
+            deleted = deleted,
+            comments = commentResponse,
+        )
+    }
+
+    fun toIdResponse(): IssueIdResponse {
+        return IssueIdResponse(
+            id = id!!,
         )
     }
 }
