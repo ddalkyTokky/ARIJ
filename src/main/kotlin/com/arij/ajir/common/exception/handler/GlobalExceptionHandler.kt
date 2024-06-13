@@ -2,7 +2,6 @@ package com.arij.ajir.common.exception.handler
 
 import com.arij.ajir.common.exception.*
 import com.arij.ajir.common.exception.dto.ErrorResponse
-import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -41,5 +40,11 @@ class GlobalExceptionHandler {
     @ExceptionHandler(TokenException::class)
     fun tokenException(e: RuntimeException) : ResponseEntity<ErrorResponse>{
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse(404, e.message?: "토큰 없음"))
+    }
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun illegalArgumentException(e: IllegalArgumentException) : ResponseEntity<ErrorResponse>{
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse(404, e.message?: "잘못된 접근"))
+
     }
 }
