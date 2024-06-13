@@ -1,10 +1,7 @@
 package com.arij.ajir.domain.issue.controller
 
 import com.arij.ajir.common.exception.TokenException
-import com.arij.ajir.domain.issue.dto.IssueCreateRequest
-import com.arij.ajir.domain.issue.dto.IssueResponse
-import com.arij.ajir.domain.issue.dto.PriorityUpdateRequest
-import com.arij.ajir.domain.issue.dto.IssueUpdateRequest
+import com.arij.ajir.domain.issue.dto.*
 import com.arij.ajir.domain.issue.service.IssueService
 import com.arij.ajir.infra.security.jwt.JwtPlugin
 import org.springframework.http.HttpHeaders
@@ -23,22 +20,28 @@ class IssueController(
 //    fun getAllIssues() : ResponseEntity<List<IssueResponse>> {}
 
     @GetMapping("/{issueId}")
-    fun getIssueById(@PathVariable("issueId") id: Long): ResponseEntity<IssueResponse> {
+    fun getIssueById(@PathVariable("issueId") id: Long): ResponseEntity<IssueResponseWithCommentResponse> {
         return ResponseEntity.status(HttpStatus.OK).body(issueService.getIssueById(id))
     }
 
     @PostMapping
     fun createIssue(
         @RequestHeader httpsHeaders: HttpHeaders,
-        @RequestBody issueCreateRequest: IssueCreateRequest): ResponseEntity<IssueResponse> {
-        val token: String = httpsHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
+        @RequestBody issueCreateRequest: IssueCreateRequest
+    ): ResponseEntity<IssueIdResponse> {
+        val token: String = httpsHeaders["Authorization"]?.get(0) ?: throw TokenException("No Token Found")
         val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
 
         return ResponseEntity.status(HttpStatus.CREATED).body(issueService.createIssue(issueCreateRequest, email))
     }
 
     @PutMapping("/{issueId}")
-    fun updateIssue(@PathVariable("issueId") id: Long, request: IssueUpdateRequest): ResponseEntity<IssueResponse> {
+    fun updateIssue(
+        @RequestHeader httpsHeaders: HttpHeaders,
+        @PathVariable("issueId") id: Long, request: IssueUpdateRequest
+    ): ResponseEntity<Unit> {
+        val token: String = httpsHeaders["Authorization"]?.get(0) ?: throw TokenException("No Token Found")
+
         return ResponseEntity.status(HttpStatus.OK).body(issueService.updateIssue(id, request))
     }
 
@@ -46,7 +49,7 @@ class IssueController(
     fun updateIssuePriority(
         @PathVariable("issueId") id: Long,
         @RequestBody priorityUpdateRequest: PriorityUpdateRequest,
-    ): ResponseEntity<IssueResponse> {
+    ): ResponseEntity<Unit> {
         return ResponseEntity.status(HttpStatus.OK)
             .body(issueService.updatePriority(id, priorityUpdateRequest.priority))
     }
