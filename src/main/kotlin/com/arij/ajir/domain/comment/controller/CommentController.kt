@@ -5,7 +5,6 @@ import com.arij.ajir.domain.comment.dto.CommentResponse
 import com.arij.ajir.domain.comment.dto.CommentUpdateRequest
 import com.arij.ajir.domain.comment.service.CommentService
 import com.arij.ajir.infra.security.UserPrincipal
-import com.arij.ajir.infra.security.jwt.JwtPlugin
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class CommentController(
     private val commentService: CommentService,
-    private val jwtPlugin: JwtPlugin
 ) {
 
     @PostMapping("/{issueId}")
