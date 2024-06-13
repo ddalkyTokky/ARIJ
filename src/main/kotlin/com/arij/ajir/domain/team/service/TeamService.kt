@@ -54,10 +54,8 @@ class TeamService(
 
         if(userProfileDto.role == Role.USER.name || userProfileDto.role == Role.LEADER.name){
             val member = memberRepository.findByEmail(userProfileDto.email)
-            if(member?.team?.id != teamId) throw throw IllegalArgumentException("다른 팀을 선택 하셨습니다 사용 권한이 업습니다")
+            if(member?.team?.id != teamId) throw IllegalArgumentException("다른 팀을 선택 하셨습니다 사용 권한이 업습니다")
         }
-        
-        //TODO("권한이 관리자일 경우 소속팀 여부와 상관 없이 모두 조회 가능")
 
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
 
@@ -65,9 +63,12 @@ class TeamService(
     }
 
     fun updateTeamById(teamId: Long, teamRequest: TeamRequest, userProfileDto: UserProfileDto): TeamResponse {
-        //TODO("authentication 에서 접근 사용자의 권한 확인")
-        //TODO("권한이 사용자 와 리더 일 경우 teamId 가 authentication 에서 teamName 을 비교 후에 일치 하지 않으면 throw illegalArgumentException")
-        //TODO("권한이 관리자일 경우 소속팀 여부와 상관 없이 모두 조회 가능")
+
+        if(userProfileDto.role == Role.USER.name || userProfileDto.role == Role.LEADER.name){
+            val member = memberRepository.findByEmail(userProfileDto.email)
+            if(member?.team?.id != teamId) throw IllegalArgumentException("다른 팀을 선택 하셨습니다 사용 권한이 업습니다")
+        }
+
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
 
         teamResult.name = teamRequest.name
