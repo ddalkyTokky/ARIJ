@@ -12,27 +12,26 @@ import org.springframework.context.annotation.Configuration
 class SwaggerConfig {
 
     @Bean
-    fun openAPI(): OpenAPI {
-        return OpenAPI()
-            .addSecurityItem(
-                SecurityRequirement().addList("Bearer Authentication")
+    fun openAPI(): OpenAPI = OpenAPI()
+        .addSecurityItem(
+            SecurityRequirement().addList("Bearer Authentication")
+        )
+        .components(
+            Components().addSecuritySchemes(
+                "Bearer Authentication",
+                SecurityScheme()
+                    .type(SecurityScheme.Type.HTTP)
+                    .scheme("Bearer")
+                    .bearerFormat("JWT")
+                    .`in`(SecurityScheme.In.HEADER)
+                    .name("Authorization")
             )
-            .components(
-                Components().addSecuritySchemes(
-                    "Bearer Authentication",
-                    SecurityScheme()
-                        .type(SecurityScheme.Type.HTTP)
-                        .scheme("Bearer")
-                        .bearerFormat("JWT")
-                        .`in`(SecurityScheme.In.HEADER)
-                        .name("Authorization")
-                )
-            )
-            .info(
-                Info()
-                    .title("ARIJ API")
-                    .description("ARIJ API Test Setting")
-                    .version("1.0.0")
-            )
-    }
+        )
+        .info(
+            Info()
+                .title("AJIR API")
+                .description("테스트하려고 만든 것 나중에 지워질지도?")
+                .version("1.0.0")
+        )
+
 }
