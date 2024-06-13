@@ -36,7 +36,7 @@ class TeamController(
     ): ResponseEntity<List<TeamResponse>>{
 
 
-        return ResponseEntity.status(HttpStatus.OK).body(teamService.getTeamList(name, userPrincipal))
+        return ResponseEntity.status(HttpStatus.OK).body(teamService.getTeamList(name, UserProfileDto.from(userPrincipal)))
     }
 
     @GetMapping("/{teamId}")

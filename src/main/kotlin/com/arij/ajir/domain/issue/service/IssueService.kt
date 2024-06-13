@@ -34,7 +34,7 @@ class IssueService(
     }
 
     fun getIssueById(id: Long): IssueResponse {
-        val issue = issueRepository.findIssueByIdAndDeleteStatusIsFalse(id)
+        val issue = issueRepository.findIssueByIdAndDeletedIsFalse(id)
             .orElseThrow() { IllegalStateException("Issue not found") }
 
         return issue.toResponse()
@@ -52,7 +52,7 @@ class IssueService(
     @Transactional
     fun updateIssue(issueId: Long, request: IssueUpdateRequest): IssueResponse {
         val (title, content, category) = request
-        val issue = issueRepository.findIssueByIdAndDeleteStatusIsFalse(issueId)
+        val issue = issueRepository.findIssueByIdAndDeletedIsFalse(issueId)
             .orElseThrow() { IllegalStateException("Issue not found") }
 
         issue.title = title
@@ -64,7 +64,7 @@ class IssueService(
 
     @Transactional
     fun updatePriority(issueId:Long, newPriority: Priority):IssueResponse {
-        val issue = issueRepository.findIssueByIdAndDeleteStatusIsFalse(issueId)
+        val issue = issueRepository.findIssueByIdAndDeletedIsFalse(issueId)
             .orElseThrow() { IllegalStateException("Issue not found") }
         issue.priority = newPriority
 
@@ -73,7 +73,7 @@ class IssueService(
 
     @Transactional
     fun deleteIssue(id: Long) {
-        val issue = issueRepository.findIssueByIdAndDeleteStatusIsFalse(id)
+        val issue = issueRepository.findIssueByIdAndDeletedIsFalse(id)
             .orElseThrow() { IllegalStateException("Issue not found") }
 
         issue.delete()

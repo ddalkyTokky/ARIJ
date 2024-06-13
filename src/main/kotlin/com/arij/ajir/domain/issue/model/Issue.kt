@@ -33,8 +33,8 @@ class Issue(
     @Column(name = "created_at", nullable = false)
     var createdAt: Timestamp,
 
-    @Column(name = "delete_status", nullable = false)
-    var deleteStatus: Boolean = false,
+    @Column(nullable = false)
+    var deleted: Boolean = false,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false)
@@ -47,6 +47,9 @@ class Issue(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+
+    @Column(name = "deleted_at")
+    var deletedAt: Timestamp? = null
 
     @OneToMany(mappedBy = "issue", fetch = FetchType.LAZY, orphanRemoval = true, cascade = [CascadeType.REMOVE])
     val comments: MutableList<Comment> = mutableListOf()
@@ -63,7 +66,7 @@ class Issue(
                 title = issueCreateRequest.title,
                 content = issueCreateRequest.content,
                 createdAt = Timestamp.from(Instant.now()),
-                deleteStatus = false,
+                deleted = false,
                 priority = issueCreateRequest.priority,
                 category = issueCreateRequest.category,
             )
@@ -79,7 +82,7 @@ class Issue(
         return this
     }
 
-    fun delete() { deleteStatus = true }
+    fun delete() { deleted = true }
 
     fun toResponse(): IssueResponse {
         return IssueResponse(
@@ -91,7 +94,7 @@ class Issue(
             content = this.content,
             priority = this.priority,
             category = this.category,
-            deleteStatus = this.deleteStatus,
+            deleted = this.deleted,
             comments = this.comments.map { it.toResponse() }
         )
     }
