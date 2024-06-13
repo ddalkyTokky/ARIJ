@@ -2,12 +2,14 @@ package com.arij.ajir.domain.team.service
 
 import com.arij.ajir.common.exception.DuplicateArgumentException
 import com.arij.ajir.common.exception.ModelNotFoundException
+import com.arij.ajir.domain.member.model.Role
 import com.arij.ajir.domain.member.repository.MemberRepository
 import com.arij.ajir.domain.member.service.MemberService
 import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
 import com.arij.ajir.domain.team.model.Team
 import com.arij.ajir.domain.team.repository.TeamRepository
+import jakarta.validation.constraints.Email
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -39,8 +41,10 @@ class TeamService(
     }
 
     @Transactional(readOnly = true)
-    fun getTeamList(name: String, /*memberId : Long*/): List<TeamResponse> {
-        //TODO("authentication 에서 접근 사용자가 관리자 인지 확인")
+    fun getTeamList(name: String, email: String): List<TeamResponse> {
+        val admin = memberRepository.findByEmail(email)
+        if(admin?.role == Role.ADMIN) throw NotAuthorityException("권한이 없습니다", admin.role.name)
+
         val teamResult = teamRepository.findAll()
         //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
 
