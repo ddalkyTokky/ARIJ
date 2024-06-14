@@ -43,7 +43,8 @@ class Member (
             memberId = this.id ?: throw ModelNotSavedException("Member"),
             teamName = this.team!!.name,
             email = this.email!!,
-            nickname = this.nickname!!
+            nickname = this.nickname!!,
+            role = role.name
         )
     }
 

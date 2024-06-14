@@ -45,7 +45,7 @@ class TeamService(
         MemberValid.validRole(userProfile, Role.ADMIN, "권한이 없습니다")
 
 
-        val teamResult = if(name == null || name == ""){
+        val teamResult:List<Team> = if(name == null || name == ""){
           teamRepository.findAll()
         }else{
           teamRepository.findByName(name)
@@ -53,10 +53,11 @@ class TeamService(
 
         //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
 
-        teamResult.filter { it.id == }
+
+        
 
 
-        return teamResult.map{ TeamResponse.from(it, teamResult.map { i -> i.members }) }
+        return teamResult.map{ TeamResponse.from(it, ) }
     }
 
     @Transactional(readOnly = true)

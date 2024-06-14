@@ -4,5 +4,6 @@ data class MemberResponse (
     val memberId: Long,
     val teamName: String,
     val email: String,
-    val nickname: String
+    val nickname: String,
+    val role: String,
 )
