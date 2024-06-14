@@ -42,15 +42,19 @@ class CommentService(
         val member: Member =
             memberRepository.findByIdOrNull(person.id) ?: throw IllegalArgumentException("member not found")
 
-        if (member.team!!.name == "DUMMY") throw IllegalArgumentException("사용자가 더미팀일 때 댓글 생성 금지")
+        if (member.role.name != Role.ADMIN.name) {
 
-        if (issue.team.name != member.team!!.name) throw IllegalArgumentException("사용자가 다른 팀 이슈에 댓글을 남길 수 없음")
+            if (member.team!!.name == "DUMMY") throw IllegalArgumentException("사용자가 더미팀일 때 댓글 생성 금지")
+
+            if (issue.team.name != member.team!!.name) throw IllegalArgumentException("사용자가 다른 팀 이슈에 댓글을 남길 수 없음")
+        }
 
         val comment: Comment = Comment(
             content = request.content,
             issue = issue,
             member = member,
         )
+
         commentRepository.save(comment)
 
         return comment.toResponse()
@@ -84,7 +88,7 @@ class CommentService(
         commentRepository.delete(comment)
     }
 
-    private fun checkAuthorization(commentId: Long, memberId: Long ): Comment{
+    private fun checkAuthorization(commentId: Long, memberId: Long): Comment {
 
         val comment: Comment =
             commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("Comment not found")
@@ -92,7 +96,9 @@ class CommentService(
         val member: Member =
             memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("member not found")
 
-        if ( ((comment.member.id != member.id) || (comment.issue.team != member.team)) &&
+        if (member.role.name != Role.ADMIN.name) return comment
+
+        if (((comment.member.id != member.id) || (comment.issue.team != member.team)) &&
             ((member.role.name != Role.LEADER.name) || (member.team!!.name != comment.issue.team.name))
         ) {
             throw IllegalArgumentException("타인의 댓글 이거나 내 댓글이어도 다른 팀일 때 댓글임 ")
