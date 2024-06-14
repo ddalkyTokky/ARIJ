@@ -1,6 +1,5 @@
 package com.arij.ajir.domain.comment.service
 
-import com.arij.ajir.common.exception.ModelNotFoundException
 import com.arij.ajir.domain.comment.dto.CommentCreateRequest
 import com.arij.ajir.domain.comment.dto.CommentResponse
 import com.arij.ajir.domain.comment.dto.CommentUpdateRequest
@@ -72,8 +71,11 @@ class CommentService(
         val member: Member =
             memberRepository.findByIdOrNull(person.id) ?: throw IllegalArgumentException("member not found")
 
-        if ((comment.member.id != member.id) && (member.role.name != Role.LEADER.name))
-            throw IllegalArgumentException("사용자가 남의 댓글을 수정할 수 없음")
+        if ( ((comment.member.id != member.id) || (comment.issue.team != member.team)) &&
+             ((member.role.name != Role.LEADER.name) || (member.team!!.name != comment.issue.team.name))
+        ) {
+            throw IllegalArgumentException("타인의 댓글 이거나 내 댓글이어도 다른 팀일 때 댓글임 ")
+        }
 
         comment.updateContent(request.content)
 
