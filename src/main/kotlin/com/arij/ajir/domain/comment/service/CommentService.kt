@@ -37,8 +37,12 @@ class CommentService(
         val issue: Issue =
             issueRepository.findByIdOrNull(issueId) ?: throw ModelNotFoundException("issue", issueId.toString())
 
+        if (issue.team.name == "DUMMY") throw RuntimeException("더미팀 댓글 생성 금지 / 애초에 이슈가 존재하면 안됨")
+
         val member: Member =
             memberRepository.findByIdOrNull(person.id) ?: throw ModelNotFoundException("member", person.id.toString())
+
+        if (member.team!!.name == "DUMMY") throw RuntimeException("사용자가 더미팀일 때 댓글 생성 금지")
 
         if (issue.team.name != member.team!!.name) throw RuntimeException("사용자가 다른 팀 이슈에 댓글을 남길 수 없음")
 
