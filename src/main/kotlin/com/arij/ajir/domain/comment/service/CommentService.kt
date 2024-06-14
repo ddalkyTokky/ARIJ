@@ -65,17 +65,7 @@ class CommentService(
             4. response dto로 반환
          */
 
-        val comment: Comment =
-            commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("Comment not found")
-
-        val member: Member =
-            memberRepository.findByIdOrNull(person.id) ?: throw IllegalArgumentException("member not found")
-
-        if ( ((comment.member.id != member.id) || (comment.issue.team != member.team)) &&
-             ((member.role.name != Role.LEADER.name) || (member.team!!.name != comment.issue.team.name))
-        ) {
-            throw IllegalArgumentException("타인의 댓글 이거나 내 댓글이어도 다른 팀일 때 댓글임 ")
-        }
+        val comment = checkAuthorization(commentId, person.id)
 
         comment.updateContent(request.content)
 
@@ -89,12 +79,26 @@ class CommentService(
             2. comment 삭제
          */
 
+        val comment = checkAuthorization(commentId, person.id)
+
+        commentRepository.delete(comment)
+    }
+
+    private fun checkAuthorization(commentId: Long, memberId: Long ): Comment{
+
         val comment: Comment =
             commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("Comment not found")
 
-        if (comment.member.id != person.id) throw IllegalArgumentException("사용자가 남의 댓글을 삭제할 수 없음")
+        val member: Member =
+            memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("member not found")
 
-        commentRepository.delete(comment)
+        if ( ((comment.member.id != member.id) || (comment.issue.team != member.team)) &&
+            ((member.role.name != Role.LEADER.name) || (member.team!!.name != comment.issue.team.name))
+        ) {
+            throw IllegalArgumentException("타인의 댓글 이거나 내 댓글이어도 다른 팀일 때 댓글임 ")
+        }
+
+        return comment
     }
 
 
