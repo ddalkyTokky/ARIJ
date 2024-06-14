@@ -90,7 +90,12 @@ class TeamService(
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
         val dummyTeam = teamRepository.findByIdOrNull(1L)!!
 
-        teamResult.members.map{ it.team = dummyTeam }
+        teamResult.members.map{
+            it.team = dummyTeam
+            if (it.role == Role.LEADER) {
+                it.fireTeam(teamResult)
+            }
+        }
 
         teamRepository.delete(teamResult)
     }
