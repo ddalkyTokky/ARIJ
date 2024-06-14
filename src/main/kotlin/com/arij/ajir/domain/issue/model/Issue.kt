@@ -1,6 +1,5 @@
 package com.arij.ajir.domain.issue.model
 
-import com.arij.ajir.domain.comment.dto.CommentResponse
 import com.arij.ajir.domain.comment.model.Comment
 import com.arij.ajir.domain.comment.model.toResponse
 import com.arij.ajir.domain.issue.dto.*
@@ -81,7 +80,10 @@ class Issue(
         return this
     }
 
-    fun delete() { deleted = true }
+    fun delete() {
+        deletedAt = Timestamp.from(Instant.now())
+        deleted = true
+    }
 
     fun toResponse(): IssueResponse {
         return IssueResponse(
