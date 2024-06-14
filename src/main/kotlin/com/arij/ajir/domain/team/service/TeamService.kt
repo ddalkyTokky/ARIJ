@@ -10,7 +10,6 @@ import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
 import com.arij.ajir.domain.team.model.Team
 import com.arij.ajir.domain.team.repository.TeamRepository
-import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -50,7 +49,7 @@ class TeamService(
 
         //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
 
-        return teamResult.map{ TeamResponse.from(it, it.issues.size.toLong(), it.members.size.toLong(), null) }
+        return teamResult.map{ TeamResponse.from(it, null) }
     }
 
     @Transactional(readOnly = true)
@@ -63,7 +62,7 @@ class TeamService(
 
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
 
-        return TeamResponse.from(teamResult, teamResult.issues.size.toLong(), teamResult.members.size.toLong(), teamResult.members)
+        return TeamResponse.from(teamResult, teamResult.members)
     }
 
     fun updateTeamById(teamId: Long, teamRequest: TeamRequest, userProfileDto: UserProfileDto) {
@@ -109,7 +108,7 @@ class TeamService(
             leader.team!!.id -> throw DuplicateArgumentException("Team", leader.team!!.id.toString())
             else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
         }
-        teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
+       teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
 
     }
 

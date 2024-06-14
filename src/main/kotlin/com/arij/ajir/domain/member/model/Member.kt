@@ -26,8 +26,14 @@ class Member (
     @Column(nullable = false, unique = true, length = 100)
     var email: String? = null,
 
-    @Column(nullable = false, length = 64, name = "pw")
+    @Column(nullable = false, length = 64, name = "pw1")
     var password: String? = null,
+
+    @Column(nullable = false, length = 64, name = "pw2")
+    var password2: String? = null,
+
+    @Column(nullable = false, length = 64, name = "pw3")
+    var password3: String? = null,
 
     @Column(nullable = false, unique = true, length = 20)
     var nickname: String? = null,

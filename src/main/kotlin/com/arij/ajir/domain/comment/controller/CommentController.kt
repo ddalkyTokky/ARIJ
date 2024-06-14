@@ -5,7 +5,6 @@ import com.arij.ajir.domain.comment.dto.CommentResponse
 import com.arij.ajir.domain.comment.dto.CommentUpdateRequest
 import com.arij.ajir.domain.comment.service.CommentService
 import com.arij.ajir.infra.security.UserPrincipal
-import com.arij.ajir.infra.security.jwt.JwtPlugin
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -16,45 +15,47 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class CommentController(
     private val commentService: CommentService,
-    private val jwtPlugin: JwtPlugin
 ) {
 
     @PostMapping("/{issueId}")
     fun createComment(
-        @AuthenticationPrincipal test: UserPrincipal?,
+        @AuthenticationPrincipal person: UserPrincipal?,
         @PathVariable issueId: Long,
         @RequestBody request: CommentCreateRequest
     ): ResponseEntity<CommentResponse> {
 
+        if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(commentService.createComment(issueId, request))
+            .body(commentService.createComment(issueId, request, person))
     }
 
     @PutMapping("/{commentId}")
     fun updateComment(
-        @AuthenticationPrincipal test: UserPrincipal?,
+        @AuthenticationPrincipal person: UserPrincipal?,
         @PathVariable commentId: Long,
         @RequestBody request: CommentUpdateRequest
     ): ResponseEntity<CommentResponse> {
 
+        if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(commentService.updateComment(commentId, request))
+            .body(commentService.updateComment(commentId, request, person))
     }
 
     @DeleteMapping("/{commentId}")
     fun deleteComment(
-        @AuthenticationPrincipal test: UserPrincipal?,
+        @AuthenticationPrincipal person: UserPrincipal?,
         @PathVariable commentId: Long
     ): ResponseEntity<Unit> {
 
+        if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
 
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
-            .body(commentService.deleteComment(commentId))
+            .body(commentService.deleteComment(commentId, person))
     }
 
 

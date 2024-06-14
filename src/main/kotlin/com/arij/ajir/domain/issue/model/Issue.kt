@@ -1,10 +1,9 @@
 package com.arij.ajir.domain.issue.model
 
+import com.arij.ajir.domain.comment.dto.CommentResponse
 import com.arij.ajir.domain.comment.model.Comment
 import com.arij.ajir.domain.comment.model.toResponse
-import com.arij.ajir.domain.issue.dto.IssueCreateRequest
-import com.arij.ajir.domain.issue.dto.IssueResponse
-import com.arij.ajir.domain.issue.dto.IssueUpdateRequest
+import com.arij.ajir.domain.issue.dto.*
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.team.model.Team
 import jakarta.persistence.*
@@ -33,8 +32,8 @@ class Issue(
     @Column(name = "created_at", nullable = false)
     var createdAt: Timestamp,
 
-    @Column(name = "delete_status", nullable = false)
-    var deleteStatus: Boolean = false,
+    @Column(name ="deleted", nullable = false)
+    var deleted: Boolean = false,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false)
@@ -47,6 +46,9 @@ class Issue(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+
+    @Column(name = "deleted_at")
+    var deletedAt: Timestamp? = null
 
     @OneToMany(mappedBy = "issue", fetch = FetchType.LAZY, orphanRemoval = true, cascade = [CascadeType.REMOVE])
     val comments: MutableList<Comment> = mutableListOf()
@@ -63,7 +65,7 @@ class Issue(
                 title = issueCreateRequest.title,
                 content = issueCreateRequest.content,
                 createdAt = Timestamp.from(Instant.now()),
-                deleteStatus = false,
+                deleted = false,
                 priority = issueCreateRequest.priority,
                 category = issueCreateRequest.category,
             )
@@ -79,20 +81,40 @@ class Issue(
         return this
     }
 
-    fun delete() { deleteStatus = true }
+    fun delete() { deleted = true }
 
     fun toResponse(): IssueResponse {
         return IssueResponse(
-            id = this.id!!,
-            title = this.title,
-            author = this.member.nickname!!,
-            teamName = this.team.name,
-            createdAt = this.createdAt,
-            content = this.content,
-            priority = this.priority,
-            category = this.category,
-            deleteStatus = this.deleteStatus,
-            comments = this.comments.map { it.toResponse() }
+            id = id!!,
+            title = title,
+            author = member.nickname!!,
+            teamName = team.name,
+            createdAt = createdAt,
+            content = content,
+            priority = priority,
+            category = category,
+            deleted = deleted,
+        )
+    }
+
+    fun toResponseWithCommentResponse(): IssueResponseWithCommentResponse {
+        return IssueResponseWithCommentResponse(
+            id = id!!,
+            title = title,
+            author = member.nickname!!,
+            teamName = team.name,
+            createdAt = createdAt,
+            content = content,
+            priority = priority,
+            category = category,
+            deleted = deleted,
+            comments = comments.map { it.toResponse() },
+        )
+    }
+
+    fun toIdResponse(): IssueIdResponse {
+        return IssueIdResponse(
+            id = id!!,
         )
     }
 }

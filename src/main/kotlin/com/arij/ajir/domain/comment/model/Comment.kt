@@ -35,9 +35,6 @@ class Comment(
 
 fun Comment.toResponse(): CommentResponse {
     return CommentResponse(
-        commentId = id!!,
-        author = member.nickname!!,
-        content = content,
-        createdAt = createdAt
+        commentId = id!!
     )
 }

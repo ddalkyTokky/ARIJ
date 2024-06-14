@@ -1,15 +1,12 @@
 package com.arij.ajir.domain.issue.controller
 
-import com.arij.ajir.common.exception.TokenException
-import com.arij.ajir.domain.issue.dto.IssueCreateRequest
-import com.arij.ajir.domain.issue.dto.IssueResponse
-import com.arij.ajir.domain.issue.dto.PriorityUpdateRequest
-import com.arij.ajir.domain.issue.dto.IssueUpdateRequest
+import com.arij.ajir.domain.issue.dto.*
 import com.arij.ajir.domain.issue.service.IssueService
+import com.arij.ajir.infra.security.UserPrincipal
 import com.arij.ajir.infra.security.jwt.JwtPlugin
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -23,36 +20,46 @@ class IssueController(
 //    fun getAllIssues() : ResponseEntity<List<IssueResponse>> {}
 
     @GetMapping("/{issueId}")
-    fun getIssueById(@PathVariable("issueId") id: Long): ResponseEntity<IssueResponse> {
+    fun getIssueById(
+        @AuthenticationPrincipal userPrincipal: UserPrincipal?,
+        @PathVariable("issueId") id: Long
+    ): ResponseEntity<IssueResponseWithCommentResponse> {
         return ResponseEntity.status(HttpStatus.OK).body(issueService.getIssueById(id))
     }
 
     @PostMapping
     fun createIssue(
-        @RequestHeader httpsHeaders: HttpHeaders,
-        @RequestBody issueCreateRequest: IssueCreateRequest): ResponseEntity<IssueResponse> {
-        val token: String = httpsHeaders.get("Authorization")?.get(0) ?: throw TokenException("No Token Found")
-        val email: String = jwtPlugin.validateToken(token).getOrNull()?.payload?.get("email").toString()
+        @AuthenticationPrincipal userPrincipal: UserPrincipal?,
+        @RequestBody issueCreateRequest: IssueCreateRequest
+    ): ResponseEntity<IssueIdResponse> {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(issueService.createIssue(issueCreateRequest, email))
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(issueService.createIssue(issueCreateRequest, userPrincipal!!.email))
     }
 
     @PutMapping("/{issueId}")
-    fun updateIssue(@PathVariable("issueId") id: Long, request: IssueUpdateRequest): ResponseEntity<IssueResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(issueService.updateIssue(id, request))
+    fun updateIssue(
+        @AuthenticationPrincipal userPrincipal: UserPrincipal?,
+        @PathVariable("issueId") id: Long, request: IssueUpdateRequest
+    ): ResponseEntity<Unit> {
+        return ResponseEntity.status(HttpStatus.OK).body(issueService.updateIssue(id, request, userPrincipal!!.email))
     }
 
     @PatchMapping("/{issueId}")
     fun updateIssuePriority(
+        @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable("issueId") id: Long,
         @RequestBody priorityUpdateRequest: PriorityUpdateRequest,
-    ): ResponseEntity<IssueResponse> {
+    ): ResponseEntity<Unit> {
         return ResponseEntity.status(HttpStatus.OK)
-            .body(issueService.updatePriority(id, priorityUpdateRequest.priority))
+            .body(issueService.updatePriority(id, priorityUpdateRequest.priority, userPrincipal!!.email))
     }
 
     @DeleteMapping("/{issueId}")
-    fun deleteIssue(@PathVariable("issueId") id: Long): ResponseEntity<Unit> {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(issueService.deleteIssue(id))
+    fun deleteIssue(
+        @AuthenticationPrincipal userPrincipal: UserPrincipal?,
+        @PathVariable("issueId") id: Long
+    ): ResponseEntity<Unit> {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(issueService.deleteIssue(id, userPrincipal!!.email))
     }
 }

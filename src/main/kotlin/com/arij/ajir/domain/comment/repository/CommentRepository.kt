@@ -4,4 +4,5 @@ import com.arij.ajir.domain.comment.model.Comment
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface CommentRepository : JpaRepository<Comment, Long> {
+    fun findAllByIssueId(issueId: Long): List<Comment>
 }

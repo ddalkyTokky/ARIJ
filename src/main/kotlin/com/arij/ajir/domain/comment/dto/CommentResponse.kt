@@ -1,8 +1,5 @@
 package com.arij.ajir.domain.comment.dto
 
-import com.fasterxml.jackson.annotation.JsonFormat
-import java.time.LocalDateTime
-
 data class CommentResponse(
     val commentId: Long,
     val author: String,
