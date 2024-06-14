@@ -53,11 +53,10 @@ class TeamService(
 
         //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
 
-
         
 
 
-        return teamResult.map{ TeamResponse.from(it, ) }
+        return teamResult.map{ TeamResponse.from(it, it.members ) }
     }
 
     @Transactional(readOnly = true)
@@ -69,7 +68,7 @@ class TeamService(
 
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
 
-        return TeamResponse.from(teamResult, listOf(teamResult.members))
+        return TeamResponse.from(teamResult, teamResult.members)
     }
 
     fun updateTeamById(teamId: Long, teamRequest: TeamRequest, userProfileDto: UserProfileDto) {

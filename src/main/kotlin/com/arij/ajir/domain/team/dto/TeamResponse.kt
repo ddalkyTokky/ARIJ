@@ -12,13 +12,13 @@ data class TeamResponse(
     val members : List<MemberResponse>
 ){
     companion object {
-        fun from(team: Team, members: List<Member>?):TeamResponse {
+        fun from(team: Team, members: List<Member>):TeamResponse {
             return TeamResponse(
                 teamId = team.id!!,
                 teamName = team.name,
                 issueCounts = team.issues.size.toLong(),
                 memberCounts = team.members.size.toLong(),
-                members = members?.map { it.toResponse() } ?: listOf()
+                members = members.map { it.toResponse() }
             )
         }
 
