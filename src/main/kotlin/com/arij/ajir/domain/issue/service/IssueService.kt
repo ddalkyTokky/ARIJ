@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class IssueService(
     private val issueRepository: IssueRepository,
-    private val memberRepository: MemberRepository
+    private val memberRepository: MemberRepository,
 ) {
     fun getAllIssues(
         topic: String,
@@ -47,7 +47,6 @@ class IssueService(
 
     @Transactional
     fun updateIssue(issueId: Long, request: IssueUpdateRequest, email: String) {
-        val (title, content, category) = request
         val member: Member = memberRepository.findByEmail(email) ?: throw ModelNotFoundException("Member", email)
         val issue = issueRepository.findIssueByIdAndDeletedIsFalse(issueId)
             .orElseThrow() { IllegalStateException("Issue not found") }
@@ -56,9 +55,7 @@ class IssueService(
             throw IllegalStateException("member and team not same")
         }
 
-        issue.title = title
-        issue.content = content
-        issue.category = category
+        issue.update(request)
     }
 
     @Transactional
