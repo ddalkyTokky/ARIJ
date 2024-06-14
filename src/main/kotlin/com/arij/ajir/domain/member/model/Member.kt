@@ -54,7 +54,6 @@ class Member (
     }
 
     fun fireTeam(team: Team){
-        this.team = team
         this.role = Role.USER
     }
 }
