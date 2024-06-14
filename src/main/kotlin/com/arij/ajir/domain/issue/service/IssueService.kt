@@ -40,7 +40,6 @@ class IssueService(
             if (issue.team != member.team) {
                 throw IllegalStateException("team not same")
             }
-            throw IllegalStateException("Member Role Error") // 아마 안보일듯
         }
 
         return issue.toResponseWithCommentResponse()
@@ -54,7 +53,6 @@ class IssueService(
             if (member.team!!.name == "DUMMY") {
                 throw IllegalStateException("Dummy team Can't CRUD")
             }
-            throw IllegalStateException("Member Role Error") // 아마 안보일듯
         }
 
         return issueRepository.save(issue).toIdResponse()
@@ -72,7 +70,6 @@ class IssueService(
             if (issue.member != member && issue.team != member.team) {
                 throw IllegalStateException("member and team not same")
             }
-            throw IllegalStateException("Member Role Error") // 아마 안보일듯
         }
         issue.update(request)
     }
@@ -89,9 +86,7 @@ class IssueService(
             if (issue.team != member.team) {
                 throw IllegalStateException("team not same")
             }
-            throw IllegalStateException("Member Role Error") // 아마 안보일듯
         }
-
 
         issue.priority = newPriority
     }
@@ -108,7 +103,6 @@ class IssueService(
             if (issue.team != member.team) {
                 throw IllegalStateException("team not same")
             }
-            throw IllegalStateException("Member Role Error") // 아마 안보일듯
         }
 
         issue.delete()
