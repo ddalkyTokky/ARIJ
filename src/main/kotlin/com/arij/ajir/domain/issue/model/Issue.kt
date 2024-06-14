@@ -2,6 +2,7 @@ package com.arij.ajir.domain.issue.model
 
 import com.arij.ajir.domain.comment.dto.CommentResponse
 import com.arij.ajir.domain.comment.model.Comment
+import com.arij.ajir.domain.comment.model.toResponse
 import com.arij.ajir.domain.issue.dto.*
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.team.model.Team
@@ -96,9 +97,7 @@ class Issue(
         )
     }
 
-    fun toResponseWithCommentResponse(
-        commentResponse: List<CommentResponse>
-    ): IssueResponseWithCommentResponse {
+    fun toResponseWithCommentResponse(): IssueResponseWithCommentResponse {
         return IssueResponseWithCommentResponse(
             id = id!!,
             title = title,
@@ -109,7 +108,7 @@ class Issue(
             priority = priority,
             category = category,
             deleted = deleted,
-            comments = commentResponse,
+            comments = comments.map { it.toResponse() },
         )
     }
 

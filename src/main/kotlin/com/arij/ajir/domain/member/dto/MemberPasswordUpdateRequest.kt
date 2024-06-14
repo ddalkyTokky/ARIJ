@@ -7,8 +7,8 @@ import jakarta.validation.constraints.Size
 data class MemberPasswordUpdateRequest (
     val oldPw: String,
 
+//    @field:Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]]+$")
     @field:Size(min = 8, max = 15, message = "Password must be between 8 and 15")
     @field:NotBlank(message = "The password cannot be blank.")
-    @field:Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]]+$")
     val newPw: String
 )

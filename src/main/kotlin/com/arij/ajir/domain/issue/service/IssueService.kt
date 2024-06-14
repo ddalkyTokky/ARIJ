@@ -17,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class IssueService(
     private val issueRepository: IssueRepository,
-    private val memberRepository: MemberRepository,
-    private val teamRepository: TeamRepository,
-    private val commentRepository: CommentRepository,
+    private val memberRepository: MemberRepository
 ) {
     fun getAllIssues(
         topic: String,
@@ -34,9 +32,8 @@ class IssueService(
     fun getIssueById(id: Long): IssueResponseWithCommentResponse {
         val issue = issueRepository.findIssueByIdAndDeletedIsFalse(id)
             .orElseThrow() { IllegalStateException("Issue not found") }
-        val comment = commentRepository.findAllByIssueId(id).map { it.toResponse() }
 
-        return issue.toResponseWithCommentResponse(comment)
+        return issue.toResponseWithCommentResponse()
     }
 
     @Transactional
