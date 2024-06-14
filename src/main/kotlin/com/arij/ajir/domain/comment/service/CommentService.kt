@@ -1,10 +1,10 @@
 package com.arij.ajir.domain.comment.service
 
 import com.arij.ajir.domain.comment.dto.CommentCreateRequest
-import com.arij.ajir.domain.comment.dto.CommentResponse
+import com.arij.ajir.domain.comment.dto.CommentCreateResponse
 import com.arij.ajir.domain.comment.dto.CommentUpdateRequest
 import com.arij.ajir.domain.comment.model.Comment
-import com.arij.ajir.domain.comment.model.toResponse
+import com.arij.ajir.domain.comment.model.toCreateResponse
 import com.arij.ajir.domain.comment.repository.CommentRepository
 import com.arij.ajir.domain.issue.model.Issue
 import com.arij.ajir.domain.issue.repository.IssueRepository
@@ -23,7 +23,7 @@ class CommentService(
     private val memberRepository: MemberRepository,
     private val issueRepository: IssueRepository
 ) {
-    fun createComment(issueId: Long, request: CommentCreateRequest, person: UserPrincipal): CommentResponse {
+    fun createComment(issueId: Long, request: CommentCreateRequest, person: UserPrincipal): CommentCreateResponse {
         /* TODO
             1. issue가 존재하는지 확인 --> 없다면 에러
             2. member가 존재하는지 확인 --> 없다면 에러 <== 인증 인가가 되면 없어도 됨
@@ -57,7 +57,7 @@ class CommentService(
 
         commentRepository.save(comment)
 
-        return comment.toResponse()
+        return comment.toCreateResponse()
     }
 
     fun updateComment(commentId: Long, request: CommentUpdateRequest, person: UserPrincipal): Unit {

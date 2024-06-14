@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.comment.model
 
+import com.arij.ajir.domain.comment.dto.CommentCreateResponse
 import com.arij.ajir.domain.comment.dto.CommentResponse
 import com.arij.ajir.domain.issue.model.Issue
 import com.arij.ajir.domain.member.model.Member
@@ -33,8 +34,18 @@ class Comment(
 
 }
 
+// TODO : 이슈 단건 조회 시  댓글을 이걸로 반환하는데 수정 필요함
 fun Comment.toResponse(): CommentResponse {
     return CommentResponse(
-        commentId = id!!
+        commentId = id!!,
+        author = member.nickname!!,
+        content = content,
+        createdAt = createdAt
+    )
+}
+
+fun Comment.toCreateResponse(): CommentCreateResponse {
+    return CommentCreateResponse(
+        commentId = id!!,
     )
 }
