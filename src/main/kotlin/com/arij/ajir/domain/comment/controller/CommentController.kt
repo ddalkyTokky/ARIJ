@@ -1,7 +1,7 @@
 package com.arij.ajir.domain.comment.controller
 
 import com.arij.ajir.domain.comment.dto.CommentCreateRequest
-import com.arij.ajir.domain.comment.dto.CommentResponse
+import com.arij.ajir.domain.comment.dto.CommentCreateResponse
 import com.arij.ajir.domain.comment.dto.CommentUpdateRequest
 import com.arij.ajir.domain.comment.service.CommentService
 import com.arij.ajir.infra.security.UserPrincipal
@@ -22,7 +22,7 @@ class CommentController(
         @AuthenticationPrincipal person: UserPrincipal?,
         @PathVariable issueId: Long,
         @RequestBody request: CommentCreateRequest
-    ): ResponseEntity<CommentResponse> {
+    ): ResponseEntity<CommentCreateResponse> {
 
         if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
 
@@ -36,7 +36,7 @@ class CommentController(
         @AuthenticationPrincipal person: UserPrincipal?,
         @PathVariable commentId: Long,
         @RequestBody request: CommentUpdateRequest
-    ): ResponseEntity<CommentResponse> {
+    ): ResponseEntity<Unit> {
 
         if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
 
