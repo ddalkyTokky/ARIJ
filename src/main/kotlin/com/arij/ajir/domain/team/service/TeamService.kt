@@ -133,6 +133,8 @@ class TeamService(
 
         val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
 
+        if(member.id == leader.id) throw IllegalArgumentException("나 자신은 탈퇴 시킬 수 없습 니다")
+
         when(member.team!!.id){
             leader.team!!.id -> member.team = teamRepository.findByIdOrNull(1L) ?: throw ModelNotFoundException("Team", "1L")
             else -> throw IllegalArgumentException("다른 팀입니다.")
