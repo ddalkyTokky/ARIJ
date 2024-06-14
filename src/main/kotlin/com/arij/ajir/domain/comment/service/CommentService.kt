@@ -1,5 +1,8 @@
 package com.arij.ajir.domain.comment.service
 
+import com.arij.ajir.common.exception.DummyRelatedException
+import com.arij.ajir.common.exception.ModelNotFoundException
+import com.arij.ajir.common.exception.NotAuthorityException
 import com.arij.ajir.domain.comment.dto.CommentCreateRequest
 import com.arij.ajir.domain.comment.dto.CommentCreateResponse
 import com.arij.ajir.domain.comment.dto.CommentUpdateRequest
@@ -26,18 +29,18 @@ class CommentService(
     fun createComment(issueId: Long, request: CommentCreateRequest, person: UserPrincipal): CommentCreateResponse {
 
         val issue: Issue =
-            issueRepository.findByIdOrNull(issueId) ?: throw IllegalArgumentException("issue not found")
+            issueRepository.findByIdOrNull(issueId) ?: throw ModelNotFoundException("이슈", issueId.toString())
 
-        if (issue.team.name == "DUMMY") throw IllegalArgumentException("더미팀 댓글 생성 금지 / 애초에 이슈가 존재하면 안됨")
+        if (issue.team.name == "DUMMY") throw DummyRelatedException() //"더미팀 댓글 생성 금지 / 애초에 이슈가 존재하면 안됨"
 
         val member: Member =
-            memberRepository.findByIdOrNull(person.id) ?: throw IllegalArgumentException("member not found")
+            memberRepository.findByIdOrNull(person.id) ?: throw ModelNotFoundException("맴버", person.id.toString())
 
         if (member.role.name != Role.ADMIN.name) {
 
-            if (member.team!!.name == "DUMMY") throw IllegalArgumentException("사용자가 더미팀일 때 댓글 생성 금지")
+            if (member.team!!.name == "DUMMY") throw DummyRelatedException() // "사용자가 더미팀일 때 댓글 생성 금지"
 
-            if (issue.team.name != member.team!!.name) throw IllegalArgumentException("사용자가 다른 팀 이슈에 댓글을 남길 수 없음")
+            if (issue.team.name != member.team!!.name) throw NotAuthorityException("사용자가 다른 팀 이슈에 댓글을 남길 수 없습니다", member.role.name)
         }
 
         val comment: Comment = Comment(
@@ -54,14 +57,14 @@ class CommentService(
     fun updateComment(commentId: Long, request: CommentUpdateRequest, person: UserPrincipal): Unit {
 
         val comment: Comment =
-            commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("Comment not found")
+            commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("댓글", commentId.toString())
 
         val member: Member =
-            memberRepository.findByIdOrNull(person.id) ?: throw IllegalArgumentException("member not found")
+            memberRepository.findByIdOrNull(person.id) ?: throw ModelNotFoundException("맴버", person.id.toString())
 
 
         if (((comment.member.id != member.id) || (comment.issue.team != member.team)) && (member.role.name != Role.ADMIN.name)) {
-            throw IllegalArgumentException("타인의 댓글 이거나 내 댓글이어도 다른 팀일 때 댓글임 ")
+            throw NotAuthorityException("사용자가 다른 팀 이슈에 댓글을 남길 수 없습니다", member.role.name) // TODO : 수정 필요
         }
 
         comment.updateContent(request.content)
@@ -73,17 +76,17 @@ class CommentService(
     fun deleteComment(commentId: Long, person: UserPrincipal): Unit {
 
         val comment: Comment =
-            commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("Comment not found")
+            commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("댓글", commentId.toString())
 
         val member: Member =
-            memberRepository.findByIdOrNull(person.id) ?: throw IllegalArgumentException("member not found")
+            memberRepository.findByIdOrNull(person.id) ?: throw ModelNotFoundException("맴버", person.id.toString())
 
         if (member.role.name != Role.ADMIN.name) {
 
             if (((comment.member.id != member.id) || (comment.issue.team != member.team)) &&
                 ((member.role.name != Role.LEADER.name) || (member.team!!.name != comment.issue.team.name))
             ) {
-                throw IllegalArgumentException("타인의 댓글 이거나 내 댓글이어도 다른 팀일 때 댓글임 ")
+                throw NotAuthorityException("사용자가 다른 팀 이슈에 댓글을 남길 수 없습니다", member.role.name) // TODO : 수정 필요
             }
         }
 
