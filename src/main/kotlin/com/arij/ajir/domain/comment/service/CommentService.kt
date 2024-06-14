@@ -24,15 +24,6 @@ class CommentService(
     private val issueRepository: IssueRepository
 ) {
     fun createComment(issueId: Long, request: CommentCreateRequest, person: UserPrincipal): CommentCreateResponse {
-        /* TODO
-            1. issue가 존재하는지 확인 --> 없다면 에러
-            2. member가 존재하는지 확인 --> 없다면 에러 <== 인증 인가가 되면 없어도 됨
-            3-1. comment 생성
-            3-2. 내용이 비어있는지 유효성 검사 --> 제약이 생긴다고 하면
-            4. comment DB에 저장
-                issue에서 comment에 연관관계 맺을 시 이슈에 먼저 추가하고 저장
-            5. response dto 반환
-         */
 
         val issue: Issue =
             issueRepository.findByIdOrNull(issueId) ?: throw IllegalArgumentException("issue not found")
@@ -61,13 +52,6 @@ class CommentService(
     }
 
     fun updateComment(commentId: Long, request: CommentUpdateRequest, person: UserPrincipal): Unit {
-        /* TODO
-            1. DB에서 Comment 가져오기 --> 없으면 에러
-            2-1. comment의 내용 수정
-            2-2. 댓글 내용 수정시 유효성 검사 --> 제약이 생길 시
-            3. DB에 변경된 Comment 저장
-            4. response dto로 반환
-         */
 
         val comment: Comment =
             commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("Comment not found")
@@ -87,10 +71,6 @@ class CommentService(
     }
 
     fun deleteComment(commentId: Long, person: UserPrincipal): Unit {
-        /* TODO
-            1. DB에서 Comment 가져오기 --> 없으면 에러
-            2. comment 삭제
-         */
 
         val comment: Comment =
             commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("Comment not found")
