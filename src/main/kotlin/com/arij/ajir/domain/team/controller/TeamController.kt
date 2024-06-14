@@ -88,6 +88,18 @@ class TeamController(
         return ResponseEntity.status(HttpStatus.OK).body(teamService.inviteMember(memberId, UserProfileDto.from(userPrincipal)))
     }
 
+    @PatchMapping("/mates/admin/{memberId}")
+    fun inviteMemberByAdmin(
+        @AuthenticationPrincipal userPrincipal: UserPrincipal?,
+        @PathVariable memberId: Long,
+        @RequestBody teamId: Long
+    ): ResponseEntity<Unit>{
+
+        if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
+
+        return ResponseEntity.status(HttpStatus.OK).body(teamService.inviteMemberByAdmin(memberId, teamId, UserProfileDto.from(userPrincipal)))
+    }
+
     @DeleteMapping("/mates/{memberId}")
     fun firedMember(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
