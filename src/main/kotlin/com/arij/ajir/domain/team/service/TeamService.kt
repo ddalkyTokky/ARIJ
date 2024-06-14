@@ -5,6 +5,7 @@ import com.arij.ajir.common.exception.DuplicateArgumentException
 import com.arij.ajir.common.exception.ModelNotFoundException
 import com.arij.ajir.domain.member.model.Role
 import com.arij.ajir.domain.member.repository.MemberRepository
+import com.arij.ajir.domain.team.dto.TeamIdRequest
 import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
 import com.arij.ajir.domain.team.etc.MemberValid
@@ -111,6 +112,22 @@ class TeamService(
 
     }
 
+    fun inviteMemberByAdmin(memberId: Long, teamIdRequest: TeamIdRequest, userProfileDto: UserProfileDto){
+
+        val userProfile = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("Member", userProfileDto.email)
+
+        MemberValid.validRole(userProfile, Role.ADMIN, "권한이 없습니다")
+
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
+        val team = teamRepository.findByIdOrNull(teamIdRequest.teamId) ?: throw ModelNotFoundException("Team", teamIdRequest.teamId.toString())
+
+        when(member.team!!.id){
+            1L -> member.team = team
+            team.id -> throw DuplicateArgumentException("Team", team.id.toString())
+            else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
+        }
+    }
+
     fun firedMember(memberId: Long, userProfileDto: UserProfileDto){
         val leader = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("Member", memberId.toString())
 
@@ -125,6 +142,8 @@ class TeamService(
 
         teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
     }
+
+
 
 
 }
