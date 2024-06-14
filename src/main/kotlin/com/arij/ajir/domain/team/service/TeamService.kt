@@ -44,15 +44,19 @@ class TeamService(
 
         MemberValid.validRole(userProfile, Role.ADMIN, "권한이 없습니다")
 
+
         val teamResult = if(name == null || name == ""){
-           teamRepository.findAll()
+          teamRepository.findAll()
         }else{
-            teamRepository.findByName(name)
+          teamRepository.findByName(name)
         }
 
         //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
 
-        return teamResult.map{ TeamResponse.from(it, null) }
+        teamResult.filter { it.id == }
+
+
+        return teamResult.map{ TeamResponse.from(it, teamResult.map { i -> i.members }) }
     }
 
     @Transactional(readOnly = true)
@@ -64,7 +68,7 @@ class TeamService(
 
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
 
-        return TeamResponse.from(teamResult, teamResult.members)
+        return TeamResponse.from(teamResult, listOf(teamResult.members))
     }
 
     fun updateTeamById(teamId: Long, teamRequest: TeamRequest, userProfileDto: UserProfileDto) {
