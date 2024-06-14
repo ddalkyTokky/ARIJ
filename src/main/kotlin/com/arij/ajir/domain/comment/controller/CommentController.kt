@@ -5,6 +5,7 @@ import com.arij.ajir.domain.comment.dto.CommentCreateResponse
 import com.arij.ajir.domain.comment.dto.CommentUpdateRequest
 import com.arij.ajir.domain.comment.service.CommentService
 import com.arij.ajir.infra.security.UserPrincipal
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -21,7 +22,7 @@ class CommentController(
     fun createComment(
         @AuthenticationPrincipal person: UserPrincipal?,
         @PathVariable issueId: Long,
-        @RequestBody request: CommentCreateRequest
+        @RequestBody @Valid request: CommentCreateRequest
     ): ResponseEntity<CommentCreateResponse> {
 
         if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
@@ -35,7 +36,7 @@ class CommentController(
     fun updateComment(
         @AuthenticationPrincipal person: UserPrincipal?,
         @PathVariable commentId: Long,
-        @RequestBody request: CommentUpdateRequest
+        @RequestBody @Valid request: CommentUpdateRequest
     ): ResponseEntity<Unit> {
 
         if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
