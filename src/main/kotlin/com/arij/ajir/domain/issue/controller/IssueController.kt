@@ -22,7 +22,7 @@ class IssueController(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable("issueId") id: Long
     ): ResponseEntity<IssueResponseWithCommentResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(issueService.getIssueById(id))
+        return ResponseEntity.status(HttpStatus.OK).body(issueService.getIssueById(id, userPrincipal!!.email))
     }
 
     @PostMapping
