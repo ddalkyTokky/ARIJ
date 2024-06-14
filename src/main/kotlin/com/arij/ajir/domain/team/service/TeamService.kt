@@ -108,8 +108,6 @@ class TeamService(
             else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
         }
 
-       teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
-
     }
 
     fun inviteMemberByAdmin(memberId: Long, teamIdRequest: TeamIdRequest, userProfileDto: UserProfileDto){
@@ -140,7 +138,6 @@ class TeamService(
             else -> throw IllegalArgumentException("다른 팀입니다.")
         }
 
-        teamRepository.findByIdOrNull(leader.team!!.id) ?: throw ModelNotFoundException("Team", leader.team!!.id.toString())
     }
 
 
