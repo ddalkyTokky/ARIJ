@@ -52,7 +52,7 @@ class CommentService(
         return comment.toResponse()
     }
 
-    fun updateComment(commentId: Long, request: CommentUpdateRequest, person: UserPrincipal): CommentResponse {
+    fun updateComment(commentId: Long, request: CommentUpdateRequest, person: UserPrincipal): Unit {
         /* TODO
             1. DB에서 Comment 가져오기 --> 없으면 에러
             2-1. comment의 내용 수정
@@ -70,7 +70,6 @@ class CommentService(
 
         commentRepository.save(comment)
 
-        return comment.toResponse()
     }
 
     fun deleteComment(commentId: Long, person: UserPrincipal): Unit {

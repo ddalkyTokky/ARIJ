@@ -36,7 +36,7 @@ class CommentController(
         @AuthenticationPrincipal person: UserPrincipal?,
         @PathVariable commentId: Long,
         @RequestBody request: CommentUpdateRequest
-    ): ResponseEntity<CommentResponse> {
+    ): ResponseEntity<Unit> {
 
         if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
 
