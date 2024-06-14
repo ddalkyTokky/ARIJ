@@ -2,6 +2,7 @@ package com.arij.ajir.domain.team.controller
 
 import com.arij.ajir.common.dto.UserProfileDto
 import com.arij.ajir.common.exception.InvalidCredentialException
+import com.arij.ajir.domain.team.dto.TeamIdRequest
 import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
 import com.arij.ajir.domain.team.service.TeamService
@@ -92,12 +93,12 @@ class TeamController(
     fun inviteMemberByAdmin(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable memberId: Long,
-        @RequestBody teamId: Long
+        @RequestBody teamIdRequest: TeamIdRequest
     ): ResponseEntity<Unit>{
 
         if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
 
-        return ResponseEntity.status(HttpStatus.OK).body(teamService.inviteMemberByAdmin(memberId, teamId, UserProfileDto.from(userPrincipal)))
+        return ResponseEntity.status(HttpStatus.OK).body(teamService.inviteMemberByAdmin(memberId, teamIdRequest, UserProfileDto.from(userPrincipal)))
     }
 
     @DeleteMapping("/mates/{memberId}")
