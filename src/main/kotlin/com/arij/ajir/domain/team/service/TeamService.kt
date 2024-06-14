@@ -24,7 +24,7 @@ class TeamService(
 
     fun createTeams(teamRequest: TeamRequest, userProfileDto: UserProfileDto): String {
 
-        if(teamRepository.existsByName(teamRequest.name)) throw DuplicateArgumentException("Team", teamRequest.name)
+        if(teamRepository.existsByName(teamRequest.name)) throw DuplicateArgumentException("팀", teamRequest.name)
         val teamResult = teamRepository.save(
             Team(
                 name = teamRequest.name,
@@ -40,7 +40,7 @@ class TeamService(
     @Transactional(readOnly = true)
     fun getTeamList(name: String?, userProfileDto: UserProfileDto): List<TeamResponse> {
 
-        val userProfile = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("Member", userProfileDto.email)
+        val userProfile = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("맴버", userProfileDto.email)
 
         MemberValid.validRole(userProfile, Role.ADMIN, "권한이 없습니다")
 
@@ -51,8 +51,6 @@ class TeamService(
           teamRepository.findByName(name)
         }
 
-        //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
-
         
 
 
@@ -62,22 +60,22 @@ class TeamService(
     @Transactional(readOnly = true)
     fun getTeamById(teamId: Long, userProfileDto: UserProfileDto): TeamResponse {
 
-        val userProfile = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("Member", userProfileDto.email)
+        val userProfile = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("맴버", userProfileDto.email)
 
         MemberValid.validNotAdmin(userProfile, teamId)
 
-        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
+        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("팀", teamId.toString())
 
         return TeamResponse.from(teamResult, teamResult.members)
     }
 
     fun updateTeamById(teamId: Long, teamRequest: TeamRequest, userProfileDto: UserProfileDto) {
 
-        val userProfile = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("Member", userProfileDto.email)
+        val userProfile = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("맴버", userProfileDto.email)
 
         MemberValid.validNotAdmin(userProfile, teamId)
 
-        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
+        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("팀", teamId.toString())
 
         teamResult.name = teamRequest.name
 
@@ -85,13 +83,13 @@ class TeamService(
 
     fun deleteTeamById(teamId: Long, userProfileDto: UserProfileDto) {
 
-        val userProfile = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("Member", userProfileDto.email)
+        val userProfile = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("맴버", userProfileDto.email)
 
         if(userProfile.role != Role.ADMIN) MemberValid.validNotLeader(userProfile, teamId)
 
         if(teamId == 1L) throw IllegalArgumentException("기본 팀은 선택할 수 없습니다")
 
-        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
+        val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("팀", teamId.toString())
         val dummyTeam = teamRepository.findByIdOrNull(1L)!!
 
         teamResult.members.map{
@@ -105,11 +103,11 @@ class TeamService(
     }
 
     fun inviteMember(memberId: Long, userProfileDto: UserProfileDto) {
-        val leader = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("Member", memberId.toString())
+        val leader = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("맴버", memberId.toString())
 
         MemberValid.validRole(leader, Role.LEADER, "해당 맴버는 리더가 아닙니다")
 
-        val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("맴버", memberId.toString())
 
         when(member.team!!.id){
             1L -> member.team = leader.team
@@ -121,30 +119,30 @@ class TeamService(
 
     fun inviteMemberByAdmin(memberId: Long, teamIdRequest: TeamIdRequest, userProfileDto: UserProfileDto){
 
-        val userProfile = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("Member", userProfileDto.email)
+        val userProfile = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("맴버", userProfileDto.email)
 
         MemberValid.validRole(userProfile, Role.ADMIN, "권한이 없습니다")
 
-        val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
-        val team = teamRepository.findByIdOrNull(teamIdRequest.teamId) ?: throw ModelNotFoundException("Team", teamIdRequest.teamId.toString())
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("맴버", memberId.toString())
+        val team = teamRepository.findByIdOrNull(teamIdRequest.teamId) ?: throw ModelNotFoundException("팀", teamIdRequest.teamId.toString())
 
         when(member.team!!.id){
-            team.id -> throw DuplicateArgumentException("Team", team.id.toString())
+            team.id -> throw DuplicateArgumentException("팀", team.id.toString())
             else -> member.team = team
         }
     }
 
     fun firedMember(memberId: Long, userProfileDto: UserProfileDto){
-        val leader = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("Member", memberId.toString())
+        val leader = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("맴버", memberId.toString())
 
         MemberValid.validNotLeaderOrAdmin(leader)
 
-        val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("맴버", memberId.toString())
 
         if(member.id == leader.id) throw IllegalArgumentException("나 자신은 탈퇴 시킬 수 없습 니다")
 
         when(member.team!!.id){
-            leader.team!!.id -> member.team = teamRepository.findByIdOrNull(1L) ?: throw ModelNotFoundException("Team", "1L")
+            leader.team!!.id -> member.team = teamRepository.findByIdOrNull(1L) ?: throw ModelNotFoundException("팀", "1L")
             else -> throw IllegalArgumentException("다른 팀입니다.")
         }
 
