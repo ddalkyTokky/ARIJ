@@ -50,7 +50,7 @@ class TeamService(
 
         //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
 
-        return teamResult.map{ TeamResponse.from(it, it.getIssuesSize(), it.getMembersSize(), null) }
+        return teamResult.map{ TeamResponse.from(it, it.issues.size.toLong(), it.members.size.toLong(), null) }
     }
 
     @Transactional(readOnly = true)
@@ -63,7 +63,7 @@ class TeamService(
 
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
 
-        return TeamResponse.from(teamResult, teamResult.getIssuesSize(), teamResult.getMembersSize(), teamResult.members)
+        return TeamResponse.from(teamResult, teamResult.issues.size.toLong(), teamResult.members.size.toLong(), teamResult.members)
     }
 
     fun updateTeamById(teamId: Long, teamRequest: TeamRequest, userProfileDto: UserProfileDto) {
@@ -116,7 +116,7 @@ class TeamService(
     fun firedMember(memberId: Long, userProfileDto: UserProfileDto){
         if(userProfileDto.role != Role.LEADER.name || userProfileDto.role != Role.ADMIN.name) throw NotAuthorityException("리더와 관리자만 접근이 가능 합니다", userProfileDto.role)
 
-        val leader = memberRepository.findByIdOrNull(6L) ?: throw ModelNotFoundException("Member", memberId.toString())
+        val leader = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("Member", memberId.toString())
         val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId.toString())
 
         when(member.team!!.id){
