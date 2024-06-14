@@ -125,9 +125,8 @@ class TeamService(
         val team = teamRepository.findByIdOrNull(teamIdRequest.teamId) ?: throw ModelNotFoundException("Team", teamIdRequest.teamId.toString())
 
         when(member.team!!.id){
-            1L -> member.team = team
             team.id -> throw DuplicateArgumentException("Team", team.id.toString())
-            else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
+            else -> member.team = team
         }
     }
 
