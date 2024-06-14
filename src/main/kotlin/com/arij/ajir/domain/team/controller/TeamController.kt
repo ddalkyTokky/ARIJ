@@ -2,11 +2,11 @@ package com.arij.ajir.domain.team.controller
 
 import com.arij.ajir.common.dto.UserProfileDto
 import com.arij.ajir.common.exception.InvalidCredentialException
+import com.arij.ajir.domain.team.dto.TeamIdRequest
 import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
 import com.arij.ajir.domain.team.service.TeamService
 import com.arij.ajir.infra.security.UserPrincipal
-import com.arij.ajir.infra.security.jwt.JwtPlugin
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/teams")
 class TeamController(
     private val teamService: TeamService,
-    private val jwtPlugin: JwtPlugin
 ){
 
     @PostMapping
@@ -34,7 +33,7 @@ class TeamController(
     @GetMapping
     fun getTeamList(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
-        @RequestParam name: String
+        @RequestParam name: String?,
     ): ResponseEntity<List<TeamResponse>>{
 
         if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
@@ -88,6 +87,18 @@ class TeamController(
         if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
 
         return ResponseEntity.status(HttpStatus.OK).body(teamService.inviteMember(memberId, UserProfileDto.from(userPrincipal)))
+    }
+
+    @PatchMapping("/mates/admin/{memberId}")
+    fun inviteMemberByAdmin(
+        @AuthenticationPrincipal userPrincipal: UserPrincipal?,
+        @PathVariable memberId: Long,
+        @RequestBody teamIdRequest: TeamIdRequest
+    ): ResponseEntity<Unit>{
+
+        if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")
+
+        return ResponseEntity.status(HttpStatus.OK).body(teamService.inviteMemberByAdmin(memberId, teamIdRequest, UserProfileDto.from(userPrincipal)))
     }
 
     @DeleteMapping("/mates/{memberId}")
