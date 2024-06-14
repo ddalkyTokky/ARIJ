@@ -69,7 +69,16 @@ class CommentService(
             4. response dto로 반환
          */
 
-        val comment = checkAuthorization(commentId, person.id)
+        val comment: Comment =
+            commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("Comment not found")
+
+        val member: Member =
+            memberRepository.findByIdOrNull(person.id) ?: throw IllegalArgumentException("member not found")
+
+
+        if (((comment.member.id != member.id) || (comment.issue.team != member.team)) && (member.role.name != Role.ADMIN.name)) {
+            throw IllegalArgumentException("타인의 댓글 이거나 내 댓글이어도 다른 팀일 때 댓글임 ")
+        }
 
         comment.updateContent(request.content)
 
@@ -83,28 +92,23 @@ class CommentService(
             2. comment 삭제
          */
 
-        val comment = checkAuthorization(commentId, person.id)
-
-        commentRepository.delete(comment)
-    }
-
-    private fun checkAuthorization(commentId: Long, memberId: Long): Comment {
-
         val comment: Comment =
             commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("Comment not found")
 
         val member: Member =
-            memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("member not found")
+            memberRepository.findByIdOrNull(person.id) ?: throw IllegalArgumentException("member not found")
 
-        if (member.role.name != Role.ADMIN.name) return comment
+        if (member.role.name != Role.ADMIN.name) {
 
-        if (((comment.member.id != member.id) || (comment.issue.team != member.team)) &&
-            ((member.role.name != Role.LEADER.name) || (member.team!!.name != comment.issue.team.name))
-        ) {
-            throw IllegalArgumentException("타인의 댓글 이거나 내 댓글이어도 다른 팀일 때 댓글임 ")
+            if (((comment.member.id != member.id) || (comment.issue.team != member.team)) &&
+                ((member.role.name != Role.LEADER.name) || (member.team!!.name != comment.issue.team.name))
+            ) {
+                throw IllegalArgumentException("타인의 댓글 이거나 내 댓글이어도 다른 팀일 때 댓글임 ")
+            }
         }
 
-        return comment
+
+        commentRepository.delete(comment)
     }
 
 
