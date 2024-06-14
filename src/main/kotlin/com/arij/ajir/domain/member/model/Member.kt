@@ -43,12 +43,18 @@ class Member (
             memberId = this.id ?: throw ModelNotSavedException("Member"),
             teamName = this.team!!.name,
             email = this.email!!,
-            nickname = this.nickname!!
+            nickname = this.nickname!!,
+            role = role.name
         )
     }
 
     fun giveTeam(team: Team){
         this.team = team
         this.role = Role.LEADER
+    }
+
+    fun fireTeam(team: Team){
+        this.team = team
+        this.role = Role.USER
     }
 }
