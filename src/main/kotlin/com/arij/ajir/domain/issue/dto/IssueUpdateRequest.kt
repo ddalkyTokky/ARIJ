@@ -2,6 +2,5 @@ package com.arij.ajir.domain.issue.dto
 
 data class IssueUpdateRequest(
     val title: String,
-    val content: String,
-    val category: String,
+    val content: String
 )

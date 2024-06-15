@@ -2,6 +2,7 @@ package com.arij.ajir.domain.issue.dto
 
 import com.arij.ajir.domain.comment.dto.CommentResponse
 import com.arij.ajir.domain.issue.model.Priority
+import com.arij.ajir.domain.issue.model.WorkingStatus
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.sql.Timestamp
 import java.time.LocalDateTime
@@ -15,7 +16,7 @@ data class IssueResponseWithCommentResponse (
     val createdAt: LocalDateTime,
     val content: String,
     val priority: Priority,
-    val category: String,
+    val workingStatus: WorkingStatus,
     val deleted: Boolean,
     val comments: List<CommentResponse>
 )

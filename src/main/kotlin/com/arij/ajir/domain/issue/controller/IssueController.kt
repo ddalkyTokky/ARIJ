@@ -43,7 +43,7 @@ class IssueController(
         return ResponseEntity.status(HttpStatus.OK).body(issueService.updateIssue(id, request, userPrincipal!!.email))
     }
 
-    @PatchMapping("/{issueId}")
+    @PatchMapping("/{issueId}/priority")
     fun updateIssuePriority(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable("issueId") id: Long,
@@ -51,6 +51,16 @@ class IssueController(
     ): ResponseEntity<Unit> {
         return ResponseEntity.status(HttpStatus.OK)
             .body(issueService.updatePriority(id, priorityUpdateRequest.priority, userPrincipal!!.email))
+    }
+
+    @PatchMapping("/{issueId}/work")
+    fun updateIssueWorkingStatus(
+        @AuthenticationPrincipal userPrincipal: UserPrincipal?,
+        @PathVariable("issueId") id: Long,
+        @RequestBody workingStatusUpdateRequest: WorkingStatusUpdateRequest,
+    ): ResponseEntity<Unit> {
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(issueService.updateWorkingStatus(id, workingStatusUpdateRequest.workingStatus, userPrincipal!!.email))
     }
 
     @DeleteMapping("/{issueId}")

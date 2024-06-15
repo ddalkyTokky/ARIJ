@@ -40,8 +40,10 @@ class Issue(
     @JdbcType(PostgreSQLEnumJdbcType::class)
     var priority: Priority,
 
-    @Column(name = "category", nullable = false)
-    var category: String,
+    @Enumerated(EnumType.STRING)
+    @Column(name = "working_status", nullable = false)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
+    var workingStatus: WorkingStatus,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,7 +69,7 @@ class Issue(
                 createdAt = LocalDateTime.now(),
                 deleted = false,
                 priority = issueCreateRequest.priority,
-                category = issueCreateRequest.category,
+                workingStatus = issueCreateRequest.workingStatus
             )
         }
     }
@@ -77,7 +79,6 @@ class Issue(
     ): Issue {
         this.title = issueUpdateRequest.title
         this.content = issueUpdateRequest.content
-        this.category = issueUpdateRequest.category
         return this
     }
 
@@ -95,7 +96,7 @@ class Issue(
             createdAt = createdAt,
             content = content,
             priority = priority,
-            category = category,
+            workingStatus = workingStatus,
             deleted = deleted,
         )
     }
@@ -109,7 +110,7 @@ class Issue(
             createdAt = createdAt,
             content = content,
             priority = priority,
-            category = category,
+            workingStatus = workingStatus,
             deleted = deleted,
             comments = comments.map { it.toResponse() },
         )

@@ -4,6 +4,7 @@ import com.arij.ajir.common.exception.ModelNotFoundException
 import com.arij.ajir.domain.issue.dto.*
 import com.arij.ajir.domain.issue.model.Issue
 import com.arij.ajir.domain.issue.model.Priority
+import com.arij.ajir.domain.issue.model.WorkingStatus
 import com.arij.ajir.domain.issue.repository.IssueRepository
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.model.Role
@@ -89,6 +90,23 @@ class IssueService(
         }
 
         issue.priority = newPriority
+    }
+
+    fun updateWorkingStatus(issueId: Long, newWorkingStatus: WorkingStatus, email: String) {
+        val member: Member = memberRepository.findByEmail(email) ?: throw ModelNotFoundException("Member", email)
+        val issue = issueRepository.findIssueByIdAndDeletedIsFalse(issueId)
+            .orElseThrow() { IllegalStateException("Issue not found") }
+
+        if (member.role.name != Role.ADMIN.name) {
+            if (member.team!!.name == "DUMMY") {
+                throw IllegalStateException("Dummy team Can't CRUD")
+            }
+            if (issue.team != member.team) {
+                throw IllegalStateException("team not same")
+            }
+        }
+
+        issue.workingStatus = newWorkingStatus
     }
 
     fun deleteIssue(id: Long, email: String) {
