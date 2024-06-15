@@ -33,7 +33,7 @@ class TeamController(
     @GetMapping
     fun getTeamList(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
-        @RequestParam name: String?,
+        @RequestParam(required = false) name: String?,
     ): ResponseEntity<List<TeamResponse>>{
 
         if (userPrincipal == null) throw InvalidCredentialException("로그인을 해 주세요")

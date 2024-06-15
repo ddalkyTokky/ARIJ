@@ -44,15 +44,19 @@ class TeamService(
 
         MemberValid.validRole(userProfile, Role.ADMIN, "권한이 없습니다")
 
-        val teamResult = if(name == null || name == ""){
-           teamRepository.findAll()
+
+        val teamResult:List<Team> = if(name == null || name == ""){
+          teamRepository.findAll()
         }else{
-            teamRepository.findByName(name)
+          teamRepository.findByName(name)
         }
 
         //TODO("name 에 특정 값이 들어올 경우 들어 온 값으로 Team Repository 에서 필터링 후에 조회")
 
-        return teamResult.map{ TeamResponse.from(it, null) }
+        
+
+
+        return teamResult.map{ TeamResponse.from(it, it.members ) }
     }
 
     @Transactional(readOnly = true)
@@ -90,7 +94,12 @@ class TeamService(
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
         val dummyTeam = teamRepository.findByIdOrNull(1L)!!
 
-        teamResult.members.map{ it.team = dummyTeam }
+        teamResult.members.map{
+            it.team = dummyTeam
+            if (it.role == Role.LEADER) {
+                it.fireTeam(teamResult)
+            }
+        }
 
         teamRepository.delete(teamResult)
     }
@@ -120,9 +129,8 @@ class TeamService(
         val team = teamRepository.findByIdOrNull(teamIdRequest.teamId) ?: throw ModelNotFoundException("Team", teamIdRequest.teamId.toString())
 
         when(member.team!!.id){
-            1L -> member.team = team
             team.id -> throw DuplicateArgumentException("Team", team.id.toString())
-            else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
+            else -> member.team = team
         }
     }
 

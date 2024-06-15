@@ -10,6 +10,7 @@ import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType
 import java.sql.Timestamp
 import java.time.Instant
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "Issue")
@@ -29,7 +30,7 @@ class Issue(
     var content: String,
 
     @Column(name = "created_at", nullable = false)
-    var createdAt: Timestamp,
+    var createdAt: LocalDateTime,
 
     @Column(name ="deleted", nullable = false)
     var deleted: Boolean = false,
@@ -49,7 +50,7 @@ class Issue(
     var id: Long? = null
 
     @Column(name = "deleted_at")
-    var deletedAt: Timestamp? = null
+    var deletedAt: LocalDateTime? = null
 
     @OneToMany(mappedBy = "issue", fetch = FetchType.LAZY, orphanRemoval = true, cascade = [CascadeType.REMOVE])
     val comments: MutableList<Comment> = mutableListOf()
@@ -65,7 +66,7 @@ class Issue(
                 team = team,
                 title = issueCreateRequest.title,
                 content = issueCreateRequest.content,
-                createdAt = Timestamp.from(Instant.now()),
+                createdAt = LocalDateTime.now(),
                 deleted = false,
                 priority = issueCreateRequest.priority,
                 workingStatus = issueCreateRequest.workingStatus
@@ -82,7 +83,7 @@ class Issue(
     }
 
     fun delete() {
-        deletedAt = Timestamp.from(Instant.now())
+        deletedAt = LocalDateTime.now()
         deleted = true
     }
 
