@@ -54,7 +54,7 @@ class TeamService(
         
 
 
-        return teamResult.map{ TeamResponse.from(it, it.members ) }
+        return teamResult.map{ TeamResponse.from(it, listOf(), it.members ) }
     }
 
     @Transactional(readOnly = true)
@@ -66,7 +66,7 @@ class TeamService(
 
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("팀", teamId.toString())
 
-        return TeamResponse.from(teamResult, teamResult.members)
+        return TeamResponse.from(teamResult, teamResult.issues ,teamResult.members)
     }
 
     fun updateTeamById(teamId: Long, teamRequest: TeamRequest, userProfileDto: UserProfileDto) {
