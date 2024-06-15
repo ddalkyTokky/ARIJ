@@ -10,11 +10,11 @@ class Team(
     @Column(name = "name", nullable = false, unique = true)
     var name: String = "",
 
-    @OneToMany(mappedBy = "team", orphanRemoval = true)
+    @OneToMany(mappedBy = "team", orphanRemoval = true, fetch = FetchType.LAZY)
     val issues: MutableList<Issue> = mutableListOf(),
 
-    @OneToMany(mappedBy = "team", orphanRemoval = false)
-    val members: MutableList<Member> = mutableListOf()
+    @OneToMany(mappedBy = "team", orphanRemoval = false, fetch = FetchType.LAZY)
+    var members: MutableList<Member> = mutableListOf()
 ){
 
     @Id
