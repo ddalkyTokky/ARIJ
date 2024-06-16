@@ -7,6 +7,5 @@ data class IssueCreateRequest(
     val title: String,
     val content: String,
     val priority: Priority,
-    val category: String,
     val workingStatus: WorkingStatus
 )
