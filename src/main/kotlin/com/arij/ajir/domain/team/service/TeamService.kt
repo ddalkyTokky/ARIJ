@@ -68,6 +68,8 @@ class TeamService(
 
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("Team", teamId.toString())
 
+        teamResult.members.sortByDescending { it.role }
+
         return TeamResponse.from(teamResult, teamResult.members)
     }
 

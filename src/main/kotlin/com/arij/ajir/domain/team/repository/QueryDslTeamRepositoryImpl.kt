@@ -5,7 +5,6 @@ import com.arij.ajir.domain.member.model.QMember
 import com.arij.ajir.domain.team.model.QTeam
 import com.arij.ajir.domain.team.model.Team
 import com.arij.ajir.infra.querydsl.QueryDslSupport
-
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -35,6 +34,7 @@ class QueryDslTeamRepositoryImpl: QueryDslSupport() {
             .selectFrom(members)
             .leftJoin(members.team, team)
             .where(team.id.`in`(teamIds))
+            .orderBy(members.role.desc())
             .fetch()
 
         teams.forEach { team ->

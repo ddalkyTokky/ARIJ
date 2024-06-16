@@ -15,7 +15,6 @@ data class IssueResponseWithCommentResponse (
     val createdAt: LocalDateTime,
     val content: String,
     val priority: Priority,
-    val category: String,
     val deleted: Boolean,
     val comments: List<CommentResponse>
 )

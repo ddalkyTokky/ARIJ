@@ -40,8 +40,6 @@ class Issue(
     @JdbcType(PostgreSQLEnumJdbcType::class)
     var priority: Priority,
 
-    @Column(name = "category", nullable = false)
-    var category: String,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,7 +65,6 @@ class Issue(
                 createdAt = LocalDateTime.now(),
                 deleted = false,
                 priority = issueCreateRequest.priority,
-                category = issueCreateRequest.category,
             )
         }
     }
@@ -77,7 +74,6 @@ class Issue(
     ): Issue {
         this.title = issueUpdateRequest.title
         this.content = issueUpdateRequest.content
-        this.category = issueUpdateRequest.category
         return this
     }
 
@@ -95,7 +91,6 @@ class Issue(
             createdAt = createdAt,
             content = content,
             priority = priority,
-            category = category,
             deleted = deleted,
         )
     }
@@ -109,7 +104,6 @@ class Issue(
             createdAt = createdAt,
             content = content,
             priority = priority,
-            category = category,
             deleted = deleted,
             comments = comments.map { it.toResponse() },
         )

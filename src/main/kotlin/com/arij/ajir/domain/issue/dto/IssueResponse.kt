@@ -14,6 +14,5 @@ data class IssueResponse(
     val createdAt: LocalDateTime,
     val content: String,
     val priority: Priority,
-    val category: String,
     val deleted: Boolean,
 )
