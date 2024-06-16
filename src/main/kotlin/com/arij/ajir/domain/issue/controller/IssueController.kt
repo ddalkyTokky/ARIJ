@@ -70,7 +70,7 @@ class IssueController(
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(issueService.updatePriority(id, priorityUpdateRequest.priority, userPrincipal.email))
+            .body(issueService.updatePriority(id, priorityUpdateRequest, userPrincipal.email))
     }
 
     @PatchMapping("/{issueId}/work")
@@ -85,7 +85,7 @@ class IssueController(
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(issueService.updateWorkingStatus(id, workingStatusUpdateRequest.workingStatus, userPrincipal.email))
+            .body(issueService.updateWorkingStatus(id, workingStatusUpdateRequest, userPrincipal.email))
     }
 
     @DeleteMapping("/{issueId}")
