@@ -24,7 +24,7 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ModelNotFoundException::class)
-    fun modelNotFoundException(e: RuntimeException): ResponseEntity<ErrorResponse> {
+    fun modelNotFoundException(e: ModelNotFoundException): ResponseEntity<ErrorResponse> {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse(404, e.message ?: "존재 하지 않음"))
     }
 
@@ -34,7 +34,7 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotAuthorityException::class)
-    fun notAuthorityException(e: RuntimeException): ResponseEntity<ErrorResponse> {
+    fun notAuthorityException(e: NotAuthorityException): ResponseEntity<ErrorResponse> {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ErrorResponse(403, e.message ?: "권한 없음"))
     }
 
