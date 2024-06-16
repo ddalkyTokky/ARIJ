@@ -15,8 +15,15 @@ class IssueController(
     private val issueService: IssueService,
 ) {
     // TODO : 목록 전체 조회는 로그인 없이도 가능
-//    @GetMapping
-//    fun getAllIssues() : ResponseEntity<List<IssueResponse>> {}
+    @GetMapping
+    fun getAllIssues(
+        @RequestParam(required = false, defaultValue = "priority") topic : String,
+        @RequestParam(required = false) keyword : String,
+        @RequestParam(required = false, defaultValue = "priority") orderBy : String,
+        @RequestParam(required = false, defaultValue = "true" ) ascend : Boolean
+    ) : ResponseEntity<List<IssueResponse>> {
+        return ResponseEntity.status(HttpStatus.OK).body(issueService.getAllIssues(topic, keyword, orderBy, ascend))
+    }
 
     @GetMapping("/{issueId}")
     fun getIssueById(

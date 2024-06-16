@@ -32,7 +32,7 @@ class QueryDslTeamRepositoryImpl: QueryDslSupport() {
 
         val teamMembers = queryFactory
             .selectFrom(members)
-            .leftJoin(members.team, team)
+            .leftJoin(members.team, team).fetchJoin()
             .where(team.id.`in`(teamIds))
             .orderBy(members.role.desc())
             .fetch()

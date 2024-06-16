@@ -54,8 +54,6 @@ class TeamService(
         }
 
 
-
-
         return teamResult.map{ TeamResponse.from(it, listOf(), it.members ) }
     }
 
