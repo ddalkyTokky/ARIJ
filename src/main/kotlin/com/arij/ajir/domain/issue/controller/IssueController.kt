@@ -4,6 +4,7 @@ import com.arij.ajir.common.exception.InvalidCredentialException
 import com.arij.ajir.domain.issue.dto.*
 import com.arij.ajir.domain.issue.service.IssueService
 import com.arij.ajir.infra.security.UserPrincipal
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -25,7 +26,7 @@ class IssueController(
     ): ResponseEntity<IssueResponseWithCommentResponse> {
 
         if (userPrincipal == null) {
-           throw InvalidCredentialException()
+            throw InvalidCredentialException()
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(issueService.getIssueById(id, userPrincipal.email))
@@ -34,7 +35,7 @@ class IssueController(
     @PostMapping
     fun createIssue(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
-        @RequestBody issueCreateRequest: IssueCreateRequest
+        @Valid @RequestBody issueCreateRequest: IssueCreateRequest
     ): ResponseEntity<IssueIdResponse> {
 
         if (userPrincipal == null) {
@@ -48,7 +49,8 @@ class IssueController(
     @PutMapping("/{issueId}")
     fun updateIssue(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
-        @PathVariable("issueId") id: Long, request: IssueUpdateRequest
+        @PathVariable("issueId") id: Long,
+        @Valid @RequestBody request: IssueUpdateRequest
     ): ResponseEntity<Unit> {
 
         if (userPrincipal == null) {
