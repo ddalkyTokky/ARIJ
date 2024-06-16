@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.issue.model
 
+import com.arij.ajir.common.exception.DuplicateArgumentException
 import com.arij.ajir.domain.comment.model.Comment
 import com.arij.ajir.domain.comment.model.toResponse
 import com.arij.ajir.domain.issue.dto.*
@@ -8,8 +9,6 @@ import com.arij.ajir.domain.team.model.Team
 import jakarta.persistence.*
 import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType
-import java.sql.Timestamp
-import java.time.Instant
 import java.time.LocalDateTime
 
 @Entity
@@ -30,9 +29,9 @@ class Issue(
     var content: String,
 
     @Column(name = "created_at", nullable = false)
-    var createdAt: LocalDateTime,
+    var createdAt: LocalDateTime = LocalDateTime.now(),
 
-    @Column(name ="deleted", nullable = false)
+    @Column(name = "deleted", nullable = false)
     var deleted: Boolean = false,
 
     @Enumerated(EnumType.STRING)
@@ -40,6 +39,10 @@ class Issue(
     @JdbcType(PostgreSQLEnumJdbcType::class)
     var priority: Priority,
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "working_status", nullable = false)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
+    var workingStatus: WorkingStatus,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,30 +54,23 @@ class Issue(
     @OneToMany(mappedBy = "issue", fetch = FetchType.LAZY, orphanRemoval = true, cascade = [CascadeType.REMOVE])
     val comments: MutableList<Comment> = mutableListOf()
 
-    companion object {
-        fun createIssue(
-            issueCreateRequest: IssueCreateRequest,
-            member: Member,
-            team: Team,
-        ): Issue {
-            return Issue(
-                member = member,
-                team = team,
-                title = issueCreateRequest.title,
-                content = issueCreateRequest.content,
-                createdAt = LocalDateTime.now(),
-                deleted = false,
-                priority = issueCreateRequest.priority,
-            )
-        }
-    }
 
-    fun update(
+    fun updateTitleAndContent(
         issueUpdateRequest: IssueUpdateRequest,
-    ): Issue {
+    ) {
         this.title = issueUpdateRequest.title
         this.content = issueUpdateRequest.content
-        return this
+
+    }
+
+    fun updatePriority(priority: Priority) {
+        if (this.priority == priority) throw DuplicateArgumentException("issue", priority.toString())
+        this.priority = priority
+    }
+
+    fun updateWorkingStatus(workingStatus: WorkingStatus) {
+        if (this.workingStatus == workingStatus) throw DuplicateArgumentException("issue", workingStatus.toString())
+        this.workingStatus = workingStatus
     }
 
     fun delete() {
@@ -91,6 +87,7 @@ class Issue(
             createdAt = createdAt,
             content = content,
             priority = priority,
+            workingStatus = workingStatus,
             deleted = deleted,
         )
     }
@@ -104,6 +101,7 @@ class Issue(
             createdAt = createdAt,
             content = content,
             priority = priority,
+            workingStatus = workingStatus,
             deleted = deleted,
             comments = comments.map { it.toResponse() },
         )

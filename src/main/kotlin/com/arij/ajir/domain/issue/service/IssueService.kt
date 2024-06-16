@@ -1,9 +1,9 @@
 package com.arij.ajir.domain.issue.service
 
 import com.arij.ajir.common.exception.ModelNotFoundException
+import com.arij.ajir.domain.comment.repository.CommentRepository
 import com.arij.ajir.domain.issue.dto.*
 import com.arij.ajir.domain.issue.model.Issue
-import com.arij.ajir.domain.issue.model.Priority
 import com.arij.ajir.domain.issue.repository.IssueRepository
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.model.Role
@@ -28,84 +28,80 @@ class IssueService(
         return null
     }
 
-    fun getIssueById(id: Long, email: String): IssueResponseWithCommentResponse {
-        val member = memberRepository.findByEmail(email) ?: throw ModelNotFoundException("Member", email)
-        val issue = issueRepository.findIssueByIdAndDeletedIsFalse(id)
-            .orElseThrow() { IllegalStateException("Issue not found") }
+    fun getIssueById(issueId: Long, email: String): IssueResponseWithCommentResponse {
 
-        if (member.role.name != Role.ADMIN.name) {
-            if (member.team!!.name == "DUMMY") {
-                throw IllegalStateException("Dummy team Can't CRUD")
-            }
-            if (issue.team != member.team) {
-                throw IllegalStateException("team not same")
-            }
-        }
+        val issue = checkAuthority(issueId, email)
 
         return issue.toResponseWithCommentResponse()
     }
 
     fun createIssue(request: IssueCreateRequest, email: String): IssueIdResponse {
         val member: Member = memberRepository.findByEmail(email) ?: throw ModelNotFoundException("Member", email)
-        val issue = Issue.createIssue(request, member, member.team!!)
 
         if (member.role.name != Role.ADMIN.name) {
             if (member.team!!.name == "DUMMY") {
                 throw IllegalStateException("Dummy team Can't CRUD")
             }
         }
+
+        val issue = Issue(
+            title = request.title,
+            content = request.content,
+            priority = request.priority,
+            workingStatus = request.workingStatus,
+            member = member,
+            team = member.team!!
+        )
 
         return issueRepository.save(issue).toIdResponse()
     }
 
     fun updateIssue(issueId: Long, request: IssueUpdateRequest, email: String) {
-        val member: Member = memberRepository.findByEmail(email) ?: throw ModelNotFoundException("Member", email)
-        val issue = issueRepository.findIssueByIdAndDeletedIsFalse(issueId)
-            .orElseThrow() { IllegalStateException("Issue not found") }
 
-        if (member.role.name != Role.ADMIN.name) {
-            if (member.team!!.name == "DUMMY") {
-                throw IllegalStateException("Dummy team Can't CRUD")
-            }
-            if (issue.member != member && issue.team != member.team) {
-                throw IllegalStateException("member and team not same")
-            }
-        }
-        issue.update(request)
+        val issue = checkAuthority(issueId, email)
+
+        issue.updateTitleAndContent(request)
+
+        issueRepository.save(issue)
     }
 
-    fun updatePriority(issueId: Long, newPriority: Priority, email: String) {
-        val member: Member = memberRepository.findByEmail(email) ?: throw ModelNotFoundException("Member", email)
-        val issue = issueRepository.findIssueByIdAndDeletedIsFalse(issueId)
-            .orElseThrow() { IllegalStateException("Issue not found") }
+    fun updatePriority(issueId: Long, request: PriorityUpdateRequest, email: String) {
 
-        if (member.role.name != Role.ADMIN.name) {
-            if (member.team!!.name == "DUMMY") {
-                throw IllegalStateException("Dummy team Can't CRUD")
-            }
-            if (issue.team != member.team) {
-                throw IllegalStateException("team not same")
-            }
-        }
+        val issue = checkAuthority(issueId, email)
 
-        issue.priority = newPriority
+        issue.updatePriority(request.priority)
     }
 
-    fun deleteIssue(id: Long, email: String) {
-        val member: Member = memberRepository.findByEmail(email) ?: throw ModelNotFoundException("Member", email)
-        val issue = issueRepository.findIssueByIdAndDeletedIsFalse(id)
-            .orElseThrow() { IllegalStateException("Issue not found") }
+    fun updateWorkingStatus(issueId: Long, request: WorkingStatusUpdateRequest, email: String) {
 
-        if (member.role.name != Role.ADMIN.name) {
-            if (member.team!!.name == "DUMMY") {
-                throw IllegalStateException("Dummy team Can't CRUD")
-            }
-            if (issue.team != member.team) {
-                throw IllegalStateException("team not same")
-            }
-        }
+        val issue = checkAuthority(issueId, email)
+
+        issue.updateWorkingStatus(request.workingStatus)
+    }
+
+    fun deleteIssue(issueId: Long, email: String) {
+
+        val issue = checkAuthority(issueId, email)
 
         issue.delete()
         issueRepository.save(issue)
+    }
+
+    private fun checkAuthority(issueId: Long, email: String): Issue {
+
+        val member: Member = memberRepository.findByEmail(email) ?: throw ModelNotFoundException("Member", email)
+        val issue = issueRepository.findIssueByIdAndDeletedIsFalse(issueId)
+            .orElseThrow() { IllegalStateException("Issue not found") }
+
+        if (member.role.name != Role.ADMIN.name) {
+            if (member.team!!.name == "DUMMY") {
+                throw IllegalStateException("Dummy team Can't CRUD")
+            }
+            if (issue.team != member.team) {
+                throw IllegalStateException("team not same")
+            }
+        }
+
+        return issue
     }
 }

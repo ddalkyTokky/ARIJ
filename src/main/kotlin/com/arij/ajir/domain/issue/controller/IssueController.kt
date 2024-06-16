@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.issue.controller
 
+import com.arij.ajir.common.exception.InvalidCredentialException
 import com.arij.ajir.domain.issue.dto.*
 import com.arij.ajir.domain.issue.service.IssueService
 import com.arij.ajir.infra.security.UserPrincipal
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*
 class IssueController(
     private val issueService: IssueService,
 ) {
-
+    // TODO : 목록 전체 조회는 로그인 없이도 가능
 //    @GetMapping
 //    fun getAllIssues() : ResponseEntity<List<IssueResponse>> {}
 
@@ -22,7 +23,12 @@ class IssueController(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable("issueId") id: Long
     ): ResponseEntity<IssueResponseWithCommentResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(issueService.getIssueById(id, userPrincipal!!.email))
+
+        if (userPrincipal == null) {
+           throw InvalidCredentialException()
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(issueService.getIssueById(id, userPrincipal.email))
     }
 
     @PostMapping
@@ -31,8 +37,12 @@ class IssueController(
         @RequestBody issueCreateRequest: IssueCreateRequest
     ): ResponseEntity<IssueIdResponse> {
 
+        if (userPrincipal == null) {
+            throw InvalidCredentialException()
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(issueService.createIssue(issueCreateRequest, userPrincipal!!.email))
+            .body(issueService.createIssue(issueCreateRequest, userPrincipal.email))
     }
 
     @PutMapping("/{issueId}")
@@ -40,17 +50,42 @@ class IssueController(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable("issueId") id: Long, request: IssueUpdateRequest
     ): ResponseEntity<Unit> {
-        return ResponseEntity.status(HttpStatus.OK).body(issueService.updateIssue(id, request, userPrincipal!!.email))
+
+        if (userPrincipal == null) {
+            throw InvalidCredentialException()
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(issueService.updateIssue(id, request, userPrincipal.email))
     }
 
-    @PatchMapping("/{issueId}")
+    @PatchMapping("/{issueId}/priority")
     fun updateIssuePriority(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable("issueId") id: Long,
         @RequestBody priorityUpdateRequest: PriorityUpdateRequest,
     ): ResponseEntity<Unit> {
+
+        if (userPrincipal == null) {
+            throw InvalidCredentialException()
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
-            .body(issueService.updatePriority(id, priorityUpdateRequest.priority, userPrincipal!!.email))
+            .body(issueService.updatePriority(id, priorityUpdateRequest, userPrincipal.email))
+    }
+
+    @PatchMapping("/{issueId}/work")
+    fun updateIssueWorkingStatus(
+        @AuthenticationPrincipal userPrincipal: UserPrincipal?,
+        @PathVariable("issueId") id: Long,
+        @RequestBody workingStatusUpdateRequest: WorkingStatusUpdateRequest,
+    ): ResponseEntity<Unit> {
+
+        if (userPrincipal == null) {
+            throw InvalidCredentialException()
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(issueService.updateWorkingStatus(id, workingStatusUpdateRequest, userPrincipal.email))
     }
 
     @DeleteMapping("/{issueId}")
@@ -58,6 +93,11 @@ class IssueController(
         @AuthenticationPrincipal userPrincipal: UserPrincipal?,
         @PathVariable("issueId") id: Long
     ): ResponseEntity<Unit> {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(issueService.deleteIssue(id, userPrincipal!!.email))
+
+        if (userPrincipal == null) {
+            throw InvalidCredentialException()
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(issueService.deleteIssue(id, userPrincipal.email))
     }
 }
