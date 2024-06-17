@@ -8,9 +8,11 @@ import com.arij.ajir.domain.issue.repository.IssueRepository
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.model.Role
 import com.arij.ajir.domain.member.repository.MemberRepository
+import com.arij.ajir.infra.security.UserPrincipal
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -116,8 +118,14 @@ class IssueService(
         topic: String?,
         keyword: String?,
         orderBy: String,
-        ascend: Boolean
+        ascend: Boolean,
+        principal: UserPrincipal
     ): List<IssueResponse> {
-        return issueRepository.searchIssues(topic, keyword, orderBy, ascend).map { it.toResponse() }
+        val member =
+            memberRepository.findByIdOrNull(principal.id) ?: throw ModelNotFoundException("멤버", principal.id.toString())
+
+        val teamId: Long = if (member.role.name != Role.ADMIN.name) member.team?.id!! else -1
+
+        return issueRepository.searchIssues(topic, keyword, orderBy, ascend, teamId).map { it.toResponse() }
     }
 }

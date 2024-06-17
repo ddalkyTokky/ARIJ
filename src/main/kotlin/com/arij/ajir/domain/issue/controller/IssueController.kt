@@ -35,11 +35,15 @@ class IssueController(
         @RequestParam(name = "topic", required = false) topic: String?,
         @RequestParam(name = "keyword", required = false) keyword: String?,
         @RequestParam(name = "orderBy", required = false) orderBy: String = "createdAt",
-        @RequestParam(name = "ascend", required = false) ascend: Boolean = false
+        @RequestParam(name = "ascend", required = false) ascend: Boolean = false,
+        @AuthenticationPrincipal principal: UserPrincipal?,
     ): ResponseEntity<List<IssueResponse>> {
+
+        if(principal == null) throw InvalidCredentialException()
+
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(issueService.searchIssues(topic, keyword, orderBy, ascend))
+            .body(issueService.searchIssues(topic, keyword, orderBy, ascend, principal))
     }
 
     @GetMapping("/{issueId}")

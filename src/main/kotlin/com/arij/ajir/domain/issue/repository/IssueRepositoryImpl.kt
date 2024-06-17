@@ -13,9 +13,9 @@ import com.querydsl.core.types.dsl.EntityPathBase
 import com.querydsl.core.types.dsl.PathBuilder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import java.util.*
-import org.springframework.data.domain.Pageable
 
 @Repository
 class IssueRepositoryImpl : QueryDslSupport(), CustomIssueRepository {
@@ -23,89 +23,40 @@ class IssueRepositoryImpl : QueryDslSupport(), CustomIssueRepository {
     private val issue = QIssue.issue
 
 
-    override fun searchIssues(topic: String?, keyword: String?, orderBy: String, ascend: Boolean): List<Issue> {
+    override fun searchIssues(
+        topic: String?,
+        keyword: String?,
+        orderBy: String,
+        ascend: Boolean,
+        teamId: Long
+    ): List<Issue> {
 
         val keywordBuilder = BooleanBuilder().and(issue.deleted.eq(false))
+
+        if (teamId != -1L)
+            keywordBuilder.and(issue.team.id.eq(teamId))
 
         if (topic != null) {
 
             if (keyword == null)
                 throw IllegalArgumentException("검색어를 입력해 주세요")
 
-            val word = keyword.toUpperCase(Locale.getDefault())
+            val word = keyword.toUpperCase(Locale.getDefault()) // TODO: 테스트 용이성을 위해서 넣어둠
 
             when (topic) {
-                "title" -> keywordBuilder.and(issue.title.containsIgnoreCase(word))
-                "content" -> keywordBuilder.and(issue.content.containsIgnoreCase(word))
-                "author" -> keywordBuilder.and(issue.member.nickname.containsIgnoreCase(word))
-                "priority" -> {
-                    if (Priority.NORMAL.name == word)
-                        keywordBuilder.and(issue.priority.eq(Priority.NORMAL))
-
-                    else if (Priority.URGENT.name == word)
-                        keywordBuilder.and(issue.priority.eq(Priority.URGENT))
-
-                    else if (Priority.EMERGENCY.name == word)
-                        keywordBuilder.and(issue.priority.eq(Priority.EMERGENCY))
-
-                    else throw IllegalArgumentException("Unknown Priority $word")
-                }
-
-                "working" -> {
-                    if (WorkingStatus.TODO.name == word)
-                        keywordBuilder.and(issue.workingStatus.eq(WorkingStatus.TODO))
-                    else if (WorkingStatus.INPROGRESS.name == word)
-                        keywordBuilder.and(issue.workingStatus.eq(WorkingStatus.INPROGRESS))
-                    else if (WorkingStatus.DONE.name == word)
-                        keywordBuilder.and(issue.workingStatus.eq(WorkingStatus.DONE))
-                    else throw IllegalArgumentException("Unknown Working Status $word")
-                }
-
+                "title" -> keywordBuilder.and(issue.title.containsIgnoreCase(keyword))
+                "content" -> keywordBuilder.and(issue.content.containsIgnoreCase(keyword))
+                "author" -> keywordBuilder.and(issue.member.nickname.containsIgnoreCase(keyword))
+                "priority" -> keywordBuilder.and(issue.priority.eq(Priority.valueOf(keyword)))
+                "working" -> keywordBuilder.and(issue.workingStatus.eq(WorkingStatus.valueOf(keyword)))
                 "team" -> keywordBuilder.and(issue.team.name.containsIgnoreCase(word))
             }
         }
 
-        if(orderBy == topic) throw IllegalArgumentException("정렬기준이랑 검색 기준이랑 동일할 수 없다.")
+        if (orderBy == topic) throw IllegalArgumentException("정렬기준이랑 검색 기준이랑 동일할 수 없다.")
 
-        val query = queryFactory.select(issue).from(issue).where(keywordBuilder)
-
-//        when (orderBy) {
-//            "author" -> {
-//                if (ascend)
-//                    query.orderBy(issue.member.nickname.asc())
-//                else
-//                    query.orderBy(issue.member.nickname.desc())
-//            }
-//
-//            "priority" -> {
-//                if (ascend)
-//                    query.orderBy(issue.priority.asc())
-//                else
-//                    query.orderBy(issue.priority.desc())
-//            }
-//
-//            "working" -> {
-//                if (ascend)
-//                    query.orderBy(issue.workingStatus.asc())
-//                else
-//                    query.orderBy(issue.workingStatus.desc())
-//            }
-//
-//            else -> {
-//                if (ascend)
-//                    query.orderBy(issue.team.name.asc())
-//                else
-//                    query.orderBy(issue.createdAt.desc())
-//            }
-//        }
-        /*
-        * orderby에 와도 되는 거 issue에 property들
-        * id, member, team, createAt, ....
-        * */
-        query.orderBy(test(ascend, issue,orderBy ))
-
-
-        return query.fetch()
+        return queryFactory.select(issue).from(issue).where(keywordBuilder).orderBy(test(ascend, issue, orderBy))
+            .fetch()
     }
 
     private fun test(ascend: Boolean, path: EntityPathBase<*>, str: String): OrderSpecifier<*> {
@@ -113,7 +64,7 @@ class IssueRepositoryImpl : QueryDslSupport(), CustomIssueRepository {
 
 
         return OrderSpecifier(
-            if(ascend) Order.ASC else Order.DESC,
+            if (ascend) Order.ASC else Order.DESC,
             pathBuilder.get(str) as Expression<Comparable<*>>,
         )
     }
