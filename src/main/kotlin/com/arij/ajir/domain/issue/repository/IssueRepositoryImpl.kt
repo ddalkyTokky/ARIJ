@@ -25,7 +25,7 @@ class IssueRepositoryImpl : QueryDslSupport(), CustomIssueRepository {
 
     override fun searchIssues(topic: String?, keyword: String?, orderBy: String, ascend: Boolean): List<Issue> {
 
-        val keywordBuilder = BooleanBuilder()
+        val keywordBuilder = BooleanBuilder().and(issue.deleted.eq(false))
 
         if (topic != null) {
 
