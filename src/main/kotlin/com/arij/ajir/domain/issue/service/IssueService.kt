@@ -5,7 +5,6 @@ import com.arij.ajir.domain.comment.repository.CommentRepository
 import com.arij.ajir.domain.issue.dto.*
 import com.arij.ajir.domain.issue.model.Issue
 import com.arij.ajir.domain.issue.repository.IssueRepository
-import com.arij.ajir.domain.issue.repository.QueryDslIssueRepository
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.model.Role
 import com.arij.ajir.domain.member.repository.MemberRepository
@@ -22,18 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 class IssueService(
     private val issueRepository: IssueRepository,
     private val memberRepository: MemberRepository,
-    private val queryDslIssueRepository: QueryDslIssueRepository
 ) {
-    fun getAllIssues(
-        topic: String,
-        keyword: String,
-        orderBy: String,
-        ascend: Boolean,
-    ): List<IssueResponse>? {
-        val result = queryDslIssueRepository.searchTopicAndKeyword(topic,keyword)
-        val pageable = if (ascend) result.sortedBy { orderBy } else result.sortedByDescending { orderBy }
-        return pageable.map { it.toResponse() }
-    }
 
     fun getIssueById(issueId: Long, email: String): IssueResponseWithCommentResponse {
 
