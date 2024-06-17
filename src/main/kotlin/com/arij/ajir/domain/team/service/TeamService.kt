@@ -54,7 +54,7 @@ class TeamService(
         }
 
 
-        return teamResult.map{ TeamResponse.from(it, listOf(), it.members ) }
+        return teamResult.map{ TeamResponse.from(it, true) }
     }
 
     @Transactional(readOnly = true)
@@ -68,7 +68,7 @@ class TeamService(
 
         teamResult.members.sortByDescending { it.role }
 
-        return TeamResponse.from(teamResult, teamResult.issues, teamResult.members)
+        return TeamResponse.from(teamResult, false)
     }
 
     fun updateTeamById(teamId: Long, teamRequest: TeamRequest, userProfileDto: UserProfileDto) {

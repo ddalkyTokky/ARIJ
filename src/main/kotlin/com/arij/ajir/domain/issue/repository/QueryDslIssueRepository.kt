@@ -26,13 +26,14 @@ class QueryDslIssueRepository: QueryDslSupport() {
 
         val column = columnMap[topic]
 
-       when(columnMap[topic]) {
-           QIssue.issue.title -> column.let{ builder.and(issue.title.contains(keyword)) }
-           QIssue.issue.content -> column.let{ builder.and(issue.content.contains(keyword)) }
-           QIssue.issue.member.nickname -> column.let{ builder.and(issue.member.nickname.contains(keyword)) }
-           QIssue.issue.priority -> column.let{ builder.and(issue.priority.stringValue().contains(keyword)) }
-           QIssue.issue.workingStatus -> column.let{ builder.and(issue.workingStatus.stringValue().contains(keyword)) }
+       when(column) {
+           QIssue.issue.title -> column.let{ builder.and(issue.title.containsIgnoreCase(keyword)) }
+           QIssue.issue.content -> column.let{ builder.and(issue.content.containsIgnoreCase(keyword)) }
+           QIssue.issue.member.nickname -> column.let{ builder.and(issue.member.nickname.containsIgnoreCase(keyword)) }
+           QIssue.issue.priority -> column.let{ builder.and(issue.priority.stringValue().containsIgnoreCase(keyword)) }
+           QIssue.issue.workingStatus -> column.let{ builder.and(issue.workingStatus.stringValue().containsIgnoreCase(keyword)) }
        }
+
 
 
         return queryFactory
