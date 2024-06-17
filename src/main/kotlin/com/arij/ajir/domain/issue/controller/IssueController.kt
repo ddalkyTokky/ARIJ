@@ -5,6 +5,9 @@ import com.arij.ajir.domain.issue.dto.*
 import com.arij.ajir.domain.issue.service.IssueService
 import com.arij.ajir.infra.security.UserPrincipal
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -15,9 +18,29 @@ import org.springframework.web.bind.annotation.*
 class IssueController(
     private val issueService: IssueService,
 ) {
+    // TODO: 지워도 됨
+    @GetMapping("/ddddd")
+    fun bbb(@PageableDefault(size = 15, sort = ["id"]) pageable: Pageable,): ResponseEntity<Page<IssueResponse>> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(issueService.find(pageable))
+    }
+
     // TODO : 목록 전체 조회는 로그인 없이도 가능
 //    @GetMapping
 //    fun getAllIssues() : ResponseEntity<List<IssueResponse>> {}
+
+    @GetMapping("/search")
+    fun searchIssues(
+        @RequestParam(name = "topic", required = false) topic: String?,
+        @RequestParam(name = "keyword", required = false) keyword: String?,
+        @RequestParam(name = "orderBy", required = false) orderBy: String = "createdAt",
+        @RequestParam(name = "ascend", required = false) ascend: Boolean = false
+    ): ResponseEntity<List<IssueResponse>> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(issueService.searchIssues(topic, keyword, orderBy, ascend))
+    }
 
     @GetMapping("/{issueId}")
     fun getIssueById(

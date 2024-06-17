@@ -8,6 +8,8 @@ import com.arij.ajir.domain.issue.repository.IssueRepository
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.member.model.Role
 import com.arij.ajir.domain.member.repository.MemberRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,6 +21,10 @@ class IssueService(
     private val memberRepository: MemberRepository,
     private val commentRepository: CommentRepository,
 ) {
+    fun find(pageable: Pageable): Page<IssueResponse> {
+        return issueRepository.findIssue(pageable).map { it.toResponse() }
+    }
+
     fun getAllIssues(
         topic: String,
         keyword: String,
@@ -104,5 +110,14 @@ class IssueService(
         }
 
         return issue
+    }
+
+    fun searchIssues(
+        topic: String?,
+        keyword: String?,
+        orderBy: String,
+        ascend: Boolean
+    ): List<IssueResponse> {
+        return issueRepository.searchIssues(topic, keyword, orderBy, ascend).map { it.toResponse() }
     }
 }
