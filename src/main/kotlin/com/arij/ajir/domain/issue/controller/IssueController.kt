@@ -26,11 +26,7 @@ class IssueController(
             .body(issueService.find(pageable))
     }
 
-    // TODO : 목록 전체 조회는 로그인 없이도 가능
-//    @GetMapping
-//    fun getAllIssues() : ResponseEntity<List<IssueResponse>> {}
-
-    @GetMapping("/search")
+    @GetMapping()
     fun searchIssues(
         @RequestParam(name = "topic", required = false) topic: String?,
         @RequestParam(name = "keyword", required = false) keyword: String?,

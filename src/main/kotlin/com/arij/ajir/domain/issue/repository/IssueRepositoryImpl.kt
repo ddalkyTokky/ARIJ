@@ -69,10 +69,6 @@ class IssueRepositoryImpl : QueryDslSupport(), CustomIssueRepository {
         )
     }
 
-    override fun searchIssueListByTitle(title: String): List<Issue> {
-        return queryFactory.select(issue).from(issue).where(issue.title.containsIgnoreCase(title)).fetch()
-    }
-
     // TODO: 지워도 됨
     private fun getOrderSpecifier(pageable: Pageable, path: EntityPathBase<*>): Array<OrderSpecifier<*>> {
         val pathBuilder = PathBuilder(path.type, path.metadata)

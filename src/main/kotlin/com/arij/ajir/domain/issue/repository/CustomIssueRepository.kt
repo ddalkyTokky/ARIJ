@@ -14,8 +14,6 @@ interface CustomIssueRepository {
         teamId: Long
     ): List<Issue>
 
-    fun searchIssueListByTitle(title: String): List<Issue>
-
     // TODO: 지워도 됨
     fun findIssue(pageable: Pageable): Page<Issue>
 }
