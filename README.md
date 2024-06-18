@@ -1,14 +1,21 @@
 # AJIR
 
+[PPT 자료 보기](https://github.com/AJIR-ARIJ/ARIJ/blob/dev0.0.0/src/main/resources/PPT.pdf)
+
+[영상 보기](https://www.youtube.com/watch?v=byN59cJxvIg)
+
 ---
 ## 와이어 프레임
 
 [와이어 프레임 상세 보기](https://docs.google.com/spreadsheets/d/1UaHRtKKUmxIfd28su0GRdlhPRpmZt7UbsHaCK5YWFFU/edit?gid=0#gid=0)
 
+![](https://github.com/AJIR-ARIJ/ARIJ/blob/dev0.0.0/src/main/resources/img/%EC%99%80%EC%9D%B4%EC%96%B4%20%ED%94%84%EB%A0%88%EC%9E%84.png)
+
 
 ---
 ## ERD
 
+![](https://github.com/AJIR-ARIJ/ARIJ/blob/dev0.0.0/src/main/resources/img/ERD.png)
 
 ---
 
@@ -105,6 +112,4 @@ REFERENCES team (
 
 [API 명세서 상세 보기](https://docs.google.com/spreadsheets/d/1UaHRtKKUmxIfd28su0GRdlhPRpmZt7UbsHaCK5YWFFU/edit?usp=sharing )
 
-
-
-
+![](https://github.com/AJIR-ARIJ/ARIJ/blob/dev0.0.0/src/main/resources/img/API%20%EB%AA%85%EC%84%B8%EC%84%9C.png)
