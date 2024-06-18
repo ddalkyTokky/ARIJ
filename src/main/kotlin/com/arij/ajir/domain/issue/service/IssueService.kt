@@ -21,21 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 class IssueService(
     private val issueRepository: IssueRepository,
     private val memberRepository: MemberRepository,
-    private val commentRepository: CommentRepository,
 ) {
-    fun find(pageable: Pageable): Page<IssueResponse> {
-        return issueRepository.findIssue(pageable).map { it.toResponse() }
-    }
-
-    fun getAllIssues(
-        topic: String,
-        keyword: String,
-        orderBy: String,
-        ascend: Boolean,
-    ): List<IssueResponse>? {
-        val pageable = if (ascend) Sort.by(orderBy).ascending() else Sort.by(orderBy).descending()
-        return null
-    }
 
     fun getIssueById(issueId: Long, email: String): IssueResponseWithCommentResponse {
 

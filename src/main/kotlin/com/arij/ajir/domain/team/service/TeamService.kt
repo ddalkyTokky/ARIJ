@@ -10,6 +10,7 @@ import com.arij.ajir.domain.team.dto.TeamRequest
 import com.arij.ajir.domain.team.dto.TeamResponse
 import com.arij.ajir.domain.team.etc.MemberValid
 import com.arij.ajir.domain.team.model.Team
+import com.arij.ajir.domain.team.repository.QueryDslTeamRepositoryImpl
 import com.arij.ajir.domain.team.repository.TeamRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -19,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class TeamService(
     private val teamRepository: TeamRepository,
-    private val memberRepository: MemberRepository
+    private val memberRepository: MemberRepository,
+    private val queryDslTeamRepository: QueryDslTeamRepositoryImpl
 ) {
 
     fun createTeams(teamRequest: TeamRequest, userProfileDto: UserProfileDto): String {
@@ -45,16 +47,14 @@ class TeamService(
         MemberValid.validRole(userProfile, Role.ADMIN, "권한이 없습니다")
 
 
-        val teamResult:List<Team> = if(name == null || name == ""){
-          teamRepository.findAll()
-        }else{
-          teamRepository.findByName(name)
+        val teamResult: List<Team> = if (name == null || name == "") {
+            queryDslTeamRepository.findAllTeam()
+        } else {
+            teamRepository.findByName(name)
         }
 
-        
 
-
-        return teamResult.map{ TeamResponse.from(it, listOf(), it.members ) }
+        return teamResult.map{ TeamResponse.from(it, true) }
     }
 
     @Transactional(readOnly = true)
@@ -66,7 +66,9 @@ class TeamService(
 
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("팀", teamId.toString())
 
-        return TeamResponse.from(teamResult, teamResult.issues ,teamResult.members)
+        teamResult.members.sortByDescending { it.role }
+
+        return TeamResponse.from(teamResult, false)
     }
 
     fun updateTeamById(teamId: Long, teamRequest: TeamRequest, userProfileDto: UserProfileDto) {
@@ -85,9 +87,9 @@ class TeamService(
 
         val userProfile = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("맴버", userProfileDto.email)
 
-        if(userProfile.role != Role.ADMIN) MemberValid.validNotLeader(userProfile, teamId)
+        if (userProfile.role != Role.ADMIN) MemberValid.validNotLeader(userProfile, teamId)
 
-        if(teamId == 1L) throw IllegalArgumentException("기본 팀은 선택할 수 없습니다")
+        if (teamId == 1L) throw IllegalArgumentException("기본 팀은 선택할 수 없습니다")
 
         val teamResult = teamRepository.findByIdOrNull(teamId) ?: throw ModelNotFoundException("팀", teamId.toString())
         val dummyTeam = teamRepository.findByIdOrNull(1L)!!
@@ -109,7 +111,7 @@ class TeamService(
 
         val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("맴버", memberId.toString())
 
-        when(member.team!!.id){
+        when (member.team!!.id) {
             1L -> member.team = leader.team
             leader.team!!.id -> throw DuplicateArgumentException("Team", leader.team!!.id.toString())
             else -> throw IllegalArgumentException("해당 맴버는 다른 팀에 소속이 되어 있습니다")
@@ -117,7 +119,7 @@ class TeamService(
 
     }
 
-    fun inviteMemberByAdmin(memberId: Long, teamIdRequest: TeamIdRequest, userProfileDto: UserProfileDto){
+    fun inviteMemberByAdmin(memberId: Long, teamIdRequest: TeamIdRequest, userProfileDto: UserProfileDto) {
 
         val userProfile = memberRepository.findByEmail(userProfileDto.email) ?: throw ModelNotFoundException("맴버", userProfileDto.email)
 
@@ -139,7 +141,7 @@ class TeamService(
 
         val member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("맴버", memberId.toString())
 
-        if(member.id == leader.id) throw IllegalArgumentException("나 자신은 탈퇴 시킬 수 없습 니다")
+        if (member.id == leader.id) throw IllegalArgumentException("나 자신은 탈퇴 시킬 수 없습 니다")
 
         when(member.team!!.id){
             leader.team!!.id -> member.team = teamRepository.findByIdOrNull(1L) ?: throw ModelNotFoundException("팀", "1L")
@@ -147,8 +149,6 @@ class TeamService(
         }
 
     }
-
-
 
 
 }

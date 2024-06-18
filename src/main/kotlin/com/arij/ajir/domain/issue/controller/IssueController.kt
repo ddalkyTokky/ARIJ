@@ -5,9 +5,6 @@ import com.arij.ajir.domain.issue.dto.*
 import com.arij.ajir.domain.issue.service.IssueService
 import com.arij.ajir.infra.security.UserPrincipal
 import jakarta.validation.Valid
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
-import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -18,13 +15,6 @@ import org.springframework.web.bind.annotation.*
 class IssueController(
     private val issueService: IssueService,
 ) {
-    // TODO: 지워도 됨
-    @GetMapping("/ddddd")
-    fun bbb(@PageableDefault(size = 15, sort = ["id"]) pageable: Pageable,): ResponseEntity<Page<IssueResponse>> {
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(issueService.find(pageable))
-    }
 
     @GetMapping()
     fun searchIssues(

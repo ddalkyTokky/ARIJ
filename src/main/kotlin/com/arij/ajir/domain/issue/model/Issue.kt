@@ -3,10 +3,7 @@ package com.arij.ajir.domain.issue.model
 import com.arij.ajir.common.exception.DuplicateArgumentException
 import com.arij.ajir.domain.comment.model.Comment
 import com.arij.ajir.domain.comment.model.toResponse
-import com.arij.ajir.domain.issue.dto.IssueIdResponse
-import com.arij.ajir.domain.issue.dto.IssueResponse
-import com.arij.ajir.domain.issue.dto.IssueResponseWithCommentResponse
-import com.arij.ajir.domain.issue.dto.IssueUpdateRequest
+import com.arij.ajir.domain.issue.dto.*
 import com.arij.ajir.domain.member.model.Member
 import com.arij.ajir.domain.team.model.Team
 import jakarta.persistence.*

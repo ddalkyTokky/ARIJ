@@ -4,7 +4,6 @@ import com.arij.ajir.domain.comment.dto.CommentResponse
 import com.arij.ajir.domain.issue.model.Priority
 import com.arij.ajir.domain.issue.model.WorkingStatus
 import com.fasterxml.jackson.annotation.JsonFormat
-import java.sql.Timestamp
 import java.time.LocalDateTime
 
 data class IssueResponseWithCommentResponse (
