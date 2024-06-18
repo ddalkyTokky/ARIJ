@@ -1,5 +1,6 @@
 package com.arij.ajir.domain.comment.controller
 
+import com.arij.ajir.common.exception.InvalidCredentialException
 import com.arij.ajir.domain.comment.dto.CommentCreateRequest
 import com.arij.ajir.domain.comment.dto.CommentCreateResponse
 import com.arij.ajir.domain.comment.dto.CommentUpdateRequest
@@ -25,7 +26,7 @@ class CommentController(
         @RequestBody @Valid request: CommentCreateRequest
     ): ResponseEntity<CommentCreateResponse> {
 
-        if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        if (person == null) throw InvalidCredentialException()
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -39,7 +40,7 @@ class CommentController(
         @RequestBody @Valid request: CommentUpdateRequest
     ): ResponseEntity<Unit> {
 
-        if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        if (person == null) throw InvalidCredentialException()
 
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -52,7 +53,7 @@ class CommentController(
         @PathVariable commentId: Long
     ): ResponseEntity<Unit> {
 
-        if (person == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        if (person == null) throw InvalidCredentialException()
 
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
