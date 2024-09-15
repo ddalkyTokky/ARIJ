@@ -1,11 +1,10 @@
 # AJIR
 
 # [PPT 자료 보기](https://github.com/AJIR-ARIJ/ARIJ/blob/dev0.0.0/src/main/resources/PPT.pdf)
-
 # [시연 영상 보기](https://www.youtube.com/watch?v=byN59cJxvIg)
 
 ---
-## 와이어 프레임
+## 1. 와이어 프레임
 
 [와이어 프레임 상세 보기](https://docs.google.com/spreadsheets/d/1UaHRtKKUmxIfd28su0GRdlhPRpmZt7UbsHaCK5YWFFU/edit?gid=0#gid=0)
 
@@ -13,13 +12,13 @@
 
 
 ---
-## ERD
+## 2-1. DBMS ERD
 
 ![](https://github.com/AJIR-ARIJ/ARIJ/blob/dev0.0.0/src/main/resources/img/ERD.png)
 
 ---
 
-## DDL
+## 2-2. DBMS DDL
 
 <details>
 <summary> DDL </summary>
@@ -108,7 +107,7 @@ REFERENCES team (
 </details>
 
 ---
-## API 명세서
+## 3. API 명세서
 
 [API 명세서 상세 보기](https://docs.google.com/spreadsheets/d/1UaHRtKKUmxIfd28su0GRdlhPRpmZt7UbsHaCK5YWFFU/edit?usp=sharing )
 
