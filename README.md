@@ -1,8 +1,8 @@
 # AJIR
 
-[PPT 자료 보기](https://github.com/AJIR-ARIJ/ARIJ/blob/dev0.0.0/src/main/resources/PPT.pdf)
+# [PPT 자료 보기](https://github.com/AJIR-ARIJ/ARIJ/blob/dev0.0.0/src/main/resources/PPT.pdf)
 
-[영상 보기](https://www.youtube.com/watch?v=byN59cJxvIg)
+# [시연 영상 보기](https://www.youtube.com/watch?v=byN59cJxvIg)
 
 ---
 ## 와이어 프레임
